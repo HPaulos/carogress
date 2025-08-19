@@ -1,0 +1,49 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "demo@example.com",
+      "password": "demo123",
+      "name": "Sarah Johnson",
+      "avatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+      "title": "Senior Software Engineer",
+      "company": "TechCorp",
+      "level": 8,
+      "experience": 5,
+      "streak": 12,
+      "totalPoints": 2840,
+      "achievements": ["first-week", "resume-master", "interview-pro", "streak-10"],
+      "createdAt": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "2",
+      "email": "john@example.com",
+      "password": "demo123",
+      "name": "John Smith",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      "title": "Product Manager",
+      "company": "StartupXYZ",
+      "level": 5,
+      "experience": 3,
+      "streak": 7,
+      "totalPoints": 1560,
+      "achievements": ["first-week", "resume-master"],
+      "createdAt": "2024-02-01T14:20:00Z"
+    },
+    {
+      "id": "3",
+      "email": "emma@example.com",
+      "password": "demo123",
+      "name": "Emma Davis",
+      "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+      "title": "UX Designer",
+      "company": "DesignStudio",
+      "level": 3,
+      "experience": 2,
+      "streak": 3,
+      "totalPoints": 890,
+      "achievements": ["first-week"],
+      "createdAt": "2024-02-10T09:15:00Z"
+    }
+  ]
+}

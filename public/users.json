@@ -1,0 +1,58 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Sarah Johnson",
+      "email": "sarah@example.com",
+      "password": "demo123",
+      "title": "Software Engineer",
+      "company": "Tech Corp",
+      "level": 3,
+      "experience": 1250,
+      "streak": 7,
+      "totalPoints": 1250,
+      "achievements": [
+        "First Achievement",
+        "Week Streak",
+        "Level Up"
+      ],
+      "createdAt": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "2",
+      "name": "John Smith",
+      "email": "john@example.com",
+      "password": "demo123",
+      "title": "Product Manager",
+      "company": "Innovation Inc",
+      "level": 2,
+      "experience": 850,
+      "streak": 5,
+      "totalPoints": 850,
+      "achievements": [
+        "First Achievement",
+        "Week Streak"
+      ],
+      "createdAt": "2024-01-20T14:45:00Z"
+    },
+    {
+      "id": "3",
+      "name": "Emma Davis",
+      "email": "emma@example.com",
+      "password": "demo123",
+      "title": "UX Designer",
+      "company": "Creative Studio",
+      "level": 4,
+      "experience": 1800,
+      "streak": 12,
+      "totalPoints": 1800,
+      "achievements": [
+        "First Achievement",
+        "Week Streak",
+        "Level Up",
+        "Achievement Master"
+      ],
+      "createdAt": "2024-01-10T09:15:00Z"
+    }
+  ]
+}

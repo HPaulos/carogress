@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "id": "1",
+      "userId": "2",
+      "userName": "John Smith",
+      "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+      "content": "Great work on the system design project! This is exactly what interviewers look for in senior engineers. The scalability considerations are spot on.",
+      "likes": 8,
+      "replies": [
+        {
+          "id": "1-1",
+          "userId": "1",
+          "userName": "Sarah Johnson",
+          "userAvatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+          "content": "Thanks John! The AI suggestions really helped me structure the response properly.",
+          "likes": 3,
+          "createdAt": "2024-02-19T14:30:00Z"
+        }
+      ],
+      "createdAt": "2024-02-19T13:45:00Z",
+      "achievementId": "system-design-project"
+    },
+    {
+      "id": "2",
+      "userId": "3",
+      "userName": "Emma Davis",
+      "userAvatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+      "content": "Just completed my first AI interview practice session. The feedback was incredibly detailed and helpful! Highly recommend trying this feature.",
+      "likes": 12,
+      "replies": [],
+      "createdAt": "2024-02-18T16:20:00Z",
+      "achievementId": "ai-interview-practice"
+    },
+    {
+      "id": "3",
+      "userId": "1",
+      "userName": "Sarah Johnson",
+      "userAvatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+      "content": "The AI resume generator is a game-changer! It transformed my basic bullet points into compelling achievements that highlight impact and results.",
+      "likes": 15,
+      "replies": [
+        {
+          "id": "3-1",
+          "userId": "2",
+          "userName": "John Smith",
+          "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+          "content": "Agreed! I used it for my recent applications and got more callbacks than usual.",
+          "likes": 7,
+          "createdAt": "2024-02-17T11:15:00Z"
+        },
+        {
+          "id": "3-2",
+          "userId": "3",
+          "userName": "Emma Davis",
+          "userAvatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+          "content": "Any tips on how to make the AI suggestions even better?",
+          "likes": 2,
+          "createdAt": "2024-02-17T10:45:00Z"
+        }
+      ],
+      "createdAt": "2024-02-17T09:30:00Z",
+      "achievementId": "resume-generation"
+    },
+    {
+      "id": "4",
+      "userId": "2",
+      "userName": "John Smith",
+      "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+      "content": "Hit my 7-day streak today! The gamification really keeps me motivated to log achievements consistently. The badges are a nice touch too.",
+      "likes": 6,
+      "replies": [],
+      "createdAt": "2024-02-16T18:45:00Z",
+      "achievementId": "streak-7"
+    },
+    {
+      "id": "5",
+      "userId": "3",
+      "userName": "Emma Davis",
+      "userAvatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+      "content": "The job application tracker is so helpful for staying organized. Love how it integrates with the AI suggestions for follow-up emails.",
+      "likes": 9,
+      "replies": [
+        {
+          "id": "5-1",
+          "userId": "1",
+          "userName": "Sarah Johnson",
+          "userAvatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+          "content": "The follow-up email templates are gold! Saved me so much time.",
+          "likes": 4,
+          "createdAt": "2024-02-15T14:20:00Z"
+        }
+      ],
+      "createdAt": "2024-02-15T13:10:00Z",
+      "achievementId": "application-tracking"
+    }
+  ],
+  "topics": [
+    {
+      "id": "resume-tips",
+      "title": "Resume Tips & Tricks",
+      "description": "Share your best resume writing strategies and AI-generated improvements",
+      "commentCount": 23
+    },
+    {
+      "id": "interview-prep",
+      "title": "Interview Preparation",
+      "description": "Discuss interview techniques, common questions, and AI practice sessions",
+      "commentCount": 18
+    },
+    {
+      "id": "achievement-logging",
+      "title": "Achievement Logging",
+      "description": "Tips for effectively logging and categorizing your career achievements",
+      "commentCount": 15
+    },
+    {
+      "id": "job-search",
+      "title": "Job Search Strategies",
+      "description": "Share job search strategies, application tips, and success stories",
+      "commentCount": 31
+    },
+    {
+      "id": "ai-features",
+      "title": "AI Features Discussion",
+      "description": "Discuss the AI-powered features and how they've helped your career",
+      "commentCount": 27
+    }
+  ]
+}

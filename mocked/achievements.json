@@ -1,0 +1,92 @@
+{
+  "achievements": [
+    {
+      "id": "first-week",
+      "title": "First Week Warrior",
+      "description": "Complete your first week of consistent achievement logging",
+      "icon": "🎯",
+      "points": 100,
+      "category": "consistency",
+      "rarity": "common",
+      "unlockedAt": "2024-01-22T10:30:00Z"
+    },
+    {
+      "id": "resume-master",
+      "title": "Resume Master",
+      "description": "Generate 10 AI-powered resume bullets",
+      "icon": "📄",
+      "points": 250,
+      "category": "resume",
+      "rarity": "uncommon",
+      "unlockedAt": "2024-01-28T15:45:00Z"
+    },
+    {
+      "id": "interview-pro",
+      "title": "Interview Pro",
+      "description": "Complete 5 AI interview practice sessions",
+      "icon": "🎤",
+      "points": 300,
+      "category": "interview",
+      "rarity": "rare",
+      "unlockedAt": "2024-02-05T11:20:00Z"
+    },
+    {
+      "id": "streak-10",
+      "title": "Consistency King",
+      "description": "Maintain a 10-day achievement streak",
+      "icon": "🔥",
+      "points": 500,
+      "category": "consistency",
+      "rarity": "epic",
+      "unlockedAt": "2024-02-12T09:15:00Z"
+    },
+    {
+      "id": "job-hunter",
+      "title": "Job Hunter",
+      "description": "Track 20 job applications",
+      "icon": "💼",
+      "points": 200,
+      "category": "applications",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "ai-whisperer",
+      "title": "AI Whisperer",
+      "description": "Have 50 conversations with your AI career coach",
+      "icon": "🤖",
+      "points": 400,
+      "category": "ai",
+      "rarity": "rare"
+    },
+    {
+      "id": "skill-builder",
+      "title": "Skill Builder",
+      "description": "Log achievements in 5 different skill categories",
+      "icon": "🏗️",
+      "points": 350,
+      "category": "skills",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "community-champion",
+      "title": "Community Champion",
+      "description": "Help 10 other users with comments and feedback",
+      "icon": "🤝",
+      "points": 300,
+      "category": "community",
+      "rarity": "rare"
+    }
+  ],
+  "levels": [
+    { "level": 1, "minPoints": 0, "title": "Career Newbie" },
+    { "level": 2, "minPoints": 100, "title": "Achievement Seeker" },
+    { "level": 3, "minPoints": 250, "title": "Progress Tracker" },
+    { "level": 4, "minPoints": 500, "title": "Skill Developer" },
+    { "level": 5, "minPoints": 800, "title": "Career Builder" },
+    { "level": 6, "minPoints": 1200, "title": "Professional Growth" },
+    { "level": 7, "minPoints": 1700, "title": "Career Accelerator" },
+    { "level": 8, "minPoints": 2300, "title": "Industry Expert" },
+    { "level": 9, "minPoints": 3000, "title": "Career Master" },
+    { "level": 10, "minPoints": 4000, "title": "Career Legend" }
+  ]
+}

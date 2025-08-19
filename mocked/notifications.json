@@ -1,0 +1,92 @@
+{
+  "notifications": [
+    {
+      "id": "1",
+      "type": "achievement",
+      "title": "New Achievement Unlocked!",
+      "message": "Congratulations! You've earned the 'Resume Master' badge for generating 10 AI-powered resume bullets.",
+      "icon": "🏆",
+      "read": false,
+      "createdAt": "2024-02-20T10:30:00Z",
+      "actionUrl": "/dashboard/achievements"
+    },
+    {
+      "id": "2",
+      "type": "reminder",
+      "title": "Daily Achievement Reminder",
+      "message": "Don't break your streak! Log today's achievements to maintain your 12-day streak.",
+      "icon": "🔥",
+      "read": false,
+      "createdAt": "2024-02-20T09:00:00Z",
+      "actionUrl": "/dashboard"
+    },
+    {
+      "id": "3",
+      "type": "ai-suggestion",
+      "title": "AI Career Suggestion",
+      "message": "Based on your recent achievements, consider adding 'Leadership' skills to your profile. This could improve your job match rate by 15%.",
+      "icon": "🤖",
+      "read": true,
+      "createdAt": "2024-02-19T16:45:00Z",
+      "actionUrl": "/dashboard/profile"
+    },
+    {
+      "id": "4",
+      "type": "application",
+      "title": "Application Status Update",
+      "message": "Your application at Microsoft has moved to the interview stage. Check your dashboard for next steps.",
+      "icon": "💼",
+      "read": true,
+      "createdAt": "2024-02-18T14:20:00Z",
+      "actionUrl": "/dashboard/applications"
+    },
+    {
+      "id": "5",
+      "type": "community",
+      "title": "New Comment on Your Achievement",
+      "message": "John Smith commented on your 'System Design Project' achievement: 'Great work! This is exactly what interviewers look for.'",
+      "icon": "💬",
+      "read": false,
+      "createdAt": "2024-02-18T11:15:00Z",
+      "actionUrl": "/community"
+    },
+    {
+      "id": "6",
+      "type": "system",
+      "title": "New Feature Available",
+      "message": "Try our new AI Interview Practice feature! Get personalized feedback on your responses to common interview questions.",
+      "icon": "✨",
+      "read": true,
+      "createdAt": "2024-02-17T10:00:00Z",
+      "actionUrl": "/features"
+    },
+    {
+      "id": "7",
+      "type": "achievement",
+      "title": "Streak Milestone Reached!",
+      "message": "Amazing! You've maintained a 10-day achievement streak. You're now a 'Consistency King'!",
+      "icon": "👑",
+      "read": true,
+      "createdAt": "2024-02-16T09:30:00Z",
+      "actionUrl": "/dashboard/achievements"
+    },
+    {
+      "id": "8",
+      "type": "ai-suggestion",
+      "title": "Resume Enhancement Opportunity",
+      "message": "Your recent 'API Integration Project' achievement could be enhanced with metrics. Consider adding 'Improved performance by 40%' to make it more impactful.",
+      "icon": "📈",
+      "read": true,
+      "createdAt": "2024-02-15T15:20:00Z",
+      "actionUrl": "/dashboard/resume"
+    }
+  ],
+  "types": [
+    { "id": "achievement", "label": "Achievement", "color": "green" },
+    { "id": "reminder", "label": "Reminder", "color": "blue" },
+    { "id": "ai-suggestion", "label": "AI Suggestion", "color": "purple" },
+    { "id": "application", "label": "Application", "color": "orange" },
+    { "id": "community", "label": "Community", "color": "indigo" },
+    { "id": "system", "label": "System", "color": "gray" }
+  ]
+}

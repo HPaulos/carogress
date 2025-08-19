@@ -1,0 +1,82 @@
+{
+  "applications": [
+    {
+      "id": "1",
+      "company": "Google",
+      "position": "Senior Software Engineer",
+      "status": "applied",
+      "appliedDate": "2024-02-15T10:30:00Z",
+      "lastUpdated": "2024-02-15T10:30:00Z",
+      "jobUrl": "https://careers.google.com/jobs/results/123456",
+      "notes": "Applied through referral. Strong match for my React and Node.js experience.",
+      "salary": "$150,000 - $200,000",
+      "location": "Mountain View, CA",
+      "remote": false,
+      "priority": "high"
+    },
+    {
+      "id": "2",
+      "company": "Microsoft",
+      "position": "Product Manager",
+      "status": "interview",
+      "appliedDate": "2024-02-10T14:20:00Z",
+      "lastUpdated": "2024-02-18T16:45:00Z",
+      "jobUrl": "https://careers.microsoft.com/us/en/job/789012",
+      "notes": "First interview scheduled for next week. Need to prepare for product strategy questions.",
+      "salary": "$130,000 - $180,000",
+      "location": "Seattle, WA",
+      "remote": true,
+      "priority": "high"
+    },
+    {
+      "id": "3",
+      "company": "Netflix",
+      "position": "Frontend Engineer",
+      "status": "rejected",
+      "appliedDate": "2024-02-05T09:15:00Z",
+      "lastUpdated": "2024-02-12T11:30:00Z",
+      "jobUrl": "https://jobs.netflix.com/jobs/345678",
+      "notes": "Rejected after technical interview. Need to improve system design skills.",
+      "salary": "$160,000 - $220,000",
+      "location": "Los Gatos, CA",
+      "remote": true,
+      "priority": "medium"
+    },
+    {
+      "id": "4",
+      "company": "Airbnb",
+      "position": "Full Stack Engineer",
+      "status": "applied",
+      "appliedDate": "2024-02-20T13:45:00Z",
+      "lastUpdated": "2024-02-20T13:45:00Z",
+      "jobUrl": "https://careers.airbnb.com/positions/901234",
+      "notes": "Great company culture. Applied for the React/Node.js stack position.",
+      "salary": "$140,000 - $190,000",
+      "location": "San Francisco, CA",
+      "remote": true,
+      "priority": "medium"
+    },
+    {
+      "id": "5",
+      "company": "Stripe",
+      "position": "Backend Engineer",
+      "status": "phone-screen",
+      "appliedDate": "2024-02-08T11:20:00Z",
+      "lastUpdated": "2024-02-19T15:30:00Z",
+      "jobUrl": "https://stripe.com/jobs/567890",
+      "notes": "Phone screen completed. Moving to onsite interview. Focus on distributed systems.",
+      "salary": "$150,000 - $200,000",
+      "location": "San Francisco, CA",
+      "remote": false,
+      "priority": "high"
+    }
+  ],
+  "statuses": [
+    { "id": "applied", "label": "Applied", "color": "blue" },
+    { "id": "phone-screen", "label": "Phone Screen", "color": "yellow" },
+    { "id": "interview", "label": "Interview", "color": "orange" },
+    { "id": "offer", "label": "Offer", "color": "green" },
+    { "id": "rejected", "label": "Rejected", "color": "red" },
+    { "id": "withdrawn", "label": "Withdrawn", "color": "gray" }
+  ]
+}
