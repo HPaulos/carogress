@@ -18,7 +18,8 @@ import {
   Plus,
   Home,
   BookOpen,
-  Sparkles
+  Sparkles,
+  User
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import mockDataService from '../services/mockDataService'
@@ -34,6 +35,7 @@ const ResumePage = () => {
   const [documentType, setDocumentType] = useState('resume')
   const [isGenerating, setIsGenerating] = useState(false)
   const [generationProgress, setGenerationProgress] = useState(0)
+  const [generatedDocument, setGeneratedDocument] = useState(null)
   const [resumes, setResumes] = useState([])
   const [coverLetters, setCoverLetters] = useState([])
   
@@ -91,9 +93,9 @@ const ResumePage = () => {
     setIsGenerating(true)
     setGenerationProgress(0)
     
-    // Simulate AI generation progress over 2 minutes (120 seconds)
-    const totalTime = 120000 // 2 minutes in milliseconds
-    const interval = 1000 // Update every second
+    // Simulate AI generation progress over 5 seconds
+    const totalTime = 5000 // 5 seconds in milliseconds
+    const interval = 100 // Update every 100ms for smoother animation
     const progressIncrement = (interval / totalTime) * 100
     
     const progressInterval = setInterval(() => {
@@ -107,7 +109,7 @@ const ResumePage = () => {
       })
     }, interval)
     
-    // Complete generation after 2 minutes
+    // Complete generation after 5 seconds
     setTimeout(() => {
       clearInterval(progressInterval)
       setGenerationProgress(100)
@@ -116,11 +118,33 @@ const ResumePage = () => {
       setTimeout(() => {
         setIsGenerating(false)
         setGenerationProgress(0)
+        
+        // Create mock generated document
+        const newDocument = {
+          id: Date.now().toString(),
+          title: `${documentType === 'resume' ? 'Resume' : 'Cover Letter'} - ${new Date().toLocaleDateString()}`,
+          type: documentType,
+          template: documentType === 'resume' ? resumeConfig.template : coverLetterConfig.tone,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          downloads: 0,
+          rating: 0,
+          basedOnAchievements: Math.floor(Math.random() * 10) + 5,
+          content: documentType === 'resume' 
+            ? {
+                sections: ['experience', 'education', 'skills'],
+                template: resumeConfig.template,
+                maxPages: resumeConfig.maxPages,
+                includeEmail: resumeConfig.includeEmail,
+                includePhone: resumeConfig.includePhone,
+                includeAddress: resumeConfig.includeAddress
+              }
+            : `Professional ${coverLetterConfig.tone} cover letter content for ${coverLetterConfig.jobTitle || 'Software Engineer'} position at ${coverLetterConfig.company || 'Tech Company'}...`
+        }
+        
+        setGeneratedDocument(newDocument)
         toast.success(`${documentType === 'resume' ? 'Resume' : 'Cover letter'} generated successfully!`)
-        setCurrentStep(1)
-        setActiveTab('resumes')
-        loadDocuments()
-      }, 1000)
+      }, 500)
     }, totalTime)
   }
 
@@ -145,6 +169,25 @@ const ResumePage = () => {
       setCoverLetters(coverLetters.filter(cl => cl.id !== documentId))
     }
     toast.success('Document deleted successfully')
+  }
+
+  const handleSaveGeneratedDocument = () => {
+    if (generatedDocument) {
+      if (generatedDocument.type === 'resume') {
+        setResumes(prev => [generatedDocument, ...prev])
+      } else {
+        setCoverLetters(prev => [generatedDocument, ...prev])
+      }
+      setGeneratedDocument(null)
+      setCurrentStep(1)
+      setActiveTab('resumes')
+      toast.success('Document saved successfully!')
+    }
+  }
+
+  const handleRegenerateDocument = () => {
+    setGeneratedDocument(null)
+    handleGenerateDocument()
   }
 
   const nextStep = () => {
@@ -215,19 +258,15 @@ const ResumePage = () => {
                   {[
                     { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
                     { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
-                    { title: 'Generate Resume', icon: FileText, action: () => setActiveTab('generator') },
-                    { title: 'Practice Interview', icon: MessageSquare, action: () => window.location.href = '/interview' },
+                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
                     { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
-                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' }
+                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
+                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
                   ].map((item, index) => (
                     <button
                       key={index}
                       onClick={item.action}
-                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                        item.title === 'Generate Resume' && activeTab === 'generator'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
-                          : `${classes.text.secondary} hover:${classes.text.primary}`
-                      }`}
+                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${classes.text.secondary} hover:${classes.text.primary}`}
                     >
                       <item.icon className="w-4 h-4 flex-shrink-0" />
                       <span className="text-sm font-medium">{item.title}</span>
@@ -290,7 +329,7 @@ const ResumePage = () => {
                 <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
                   <div className="flex items-center justify-between mb-3">
                     {[1, 2, 3, 4].map((step) => (
-                      <div key={step} className="flex items-center">
+                      <div key={`step-${step}`} className="flex items-center">
                         <button
                           onClick={() => step <= currentStep && setCurrentStep(step)}
                           disabled={step > currentStep}
@@ -516,7 +555,7 @@ const ResumePage = () => {
                   </div>
                 )}
 
-                {currentStep === 4 && (
+                {currentStep === 4 && !isGenerating && (
                   <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6`}>
                     <div className="text-center mb-6">
                       <h3 className={`text-lg font-semibold ${classes.text.primary} mb-2`}>
@@ -643,44 +682,225 @@ const ResumePage = () => {
                   </div>
                 )}
 
-                {/* Navigation */}
-                <div className={`flex items-center justify-between pt-4 border-t ${classes.border.primary}/50`}>
-                  <button
-                    onClick={prevStep}
-                    disabled={currentStep === 1}
-                    className="group relative px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-300 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    <ChevronLeft className="w-4 h-4 text-gray-600 group-hover:text-gray-800 transition-colors" />
-                    <span className="font-medium text-gray-700">Previous</span>
-                  </button>
-                  
-                  <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-full">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs font-medium text-gray-700">
-                      Step {currentStep} of 4
-                    </span>
+                {/* Generation Animation Step */}
+                {currentStep === 4 && isGenerating && (
+                  <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-8`}>
+                    <div className="text-center">
+                      {/* AI Brain Animation */}
+                      <div className="relative mb-6">
+                        <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                            <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full animate-ping"></div>
+                          </div>
+                        </div>
+                        <div className="absolute inset-0 w-20 h-20 border-4 border-blue-300 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+                      </div>
+
+                      <h3 className={`text-2xl font-bold ${classes.text.primary} mb-2`}>
+                        AI is Generating Your {documentType === 'resume' ? 'Resume' : 'Cover Letter'}
+                      </h3>
+                      <p className={`${classes.text.secondary} mb-6`}>
+                        Our AI is analyzing your achievements and creating a professional document...
+                      </p>
+
+                      {/* Progress Bar */}
+                      <div className="mb-6">
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className={classes.text.secondary}>Progress</span>
+                          <span className={`font-medium ${classes.text.primary}`}>{Math.round(generationProgress)}%</span>
+                        </div>
+                        <div className={`w-full ${classes.bg.tertiary} rounded-full h-3 overflow-hidden`}>
+                          <motion.div
+                            className="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${generationProgress}%` }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Generation Steps */}
+                      <div className="space-y-3 text-left">
+                        {[
+                          { text: "Analyzing your achievements", completed: generationProgress > 20 },
+                          { text: "Optimizing content structure", completed: generationProgress > 40 },
+                          { text: "Applying professional formatting", completed: generationProgress > 60 },
+                          { text: "Finalizing document", completed: generationProgress > 80 },
+                          { text: "Quality check and optimization", completed: generationProgress > 95 }
+                        ].map((step, index) => (
+                          <div key={index} className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                              step.completed 
+                                ? 'bg-green-500 text-white' 
+                                : 'bg-gray-200 dark:bg-gray-700'
+                            }`}>
+                              {step.completed ? (
+                                <Check className="w-3 h-3" />
+                              ) : (
+                                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                              )}
+                            </div>
+                            <span className={`text-sm ${step.completed ? classes.text.primary : classes.text.secondary}`}>
+                              {step.text}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Estimated Time */}
+                      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p className={`text-sm ${classes.text.secondary}`}>
+                          Estimated time remaining: {Math.max(0, Math.ceil((100 - generationProgress) / 20))} seconds
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  
-                  {currentStep < 4 ? (
+                )}
+
+                {/* Generated Document Step */}
+                {currentStep === 4 && generatedDocument && (
+                  <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6`}>
+                    <div className="text-center mb-6">
+                      <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
+                      </div>
+                      <h3 className={`text-xl font-bold ${classes.text.primary} mb-2`}>
+                        {documentType === 'resume' ? 'Resume' : 'Cover Letter'} Generated Successfully!
+                      </h3>
+                      <p className={`${classes.text.secondary} text-sm`}>
+                        Your AI-generated document is ready for review and download
+                      </p>
+                    </div>
+
+                    {/* Document Preview */}
+                    <div className={`${classes.bg.tertiary} rounded-lg p-6 mb-6`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h4 className={`font-semibold ${classes.text.primary}`}>{generatedDocument.title}</h4>
+                          <p className={`text-sm ${classes.text.secondary}`}>
+                            Template: {generatedDocument.template} • Based on {generatedDocument.basedOnAchievements} achievements
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs rounded-full`}>
+                            {generatedDocument.type === 'resume' ? 'Resume' : 'Cover Letter'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Document Content Preview */}
+                      <div className={`${classes.bg.card} rounded-lg p-4 border ${classes.border.primary}`}>
+                        <h5 className={`font-medium ${classes.text.primary} mb-3`}>Document Preview</h5>
+                        {generatedDocument.type === 'resume' ? (
+                          <div className="space-y-3 text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <span className={classes.text.secondary}>Experience Section</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <span className={classes.text.secondary}>Education Section</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <span className={classes.text.secondary}>Skills Section</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              <span className={classes.text.secondary}>
+                                {generatedDocument.content.maxPages} {generatedDocument.content.maxPages === 1 ? 'Page' : 'Pages'}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <p className={`text-sm ${classes.text.secondary} leading-relaxed`}>
+                              {generatedDocument.content.substring(0, 200)}...
+                            </p>
+                            <div className="flex items-center gap-2 text-xs">
+                              <span className={`px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded`}>
+                                {generatedDocument.content.tone || 'Professional'} tone
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={() => navigate(`/document/${generatedDocument.type}/${generatedDocument.id}`)}
+                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <FileText className="w-4 h-4" />
+                        View Document
+                      </button>
+                      <button
+                        onClick={handleSaveGeneratedDocument}
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Save Document
+                      </button>
+                      <button
+                        onClick={() => handleDownload(generatedDocument, 'pdf')}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download PDF
+                      </button>
+                      <button
+                        onClick={handleRegenerateDocument}
+                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Zap className="w-4 h-4" />
+                        Regenerate
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation */}
+                {!generatedDocument && (
+                  <div className={`flex items-center justify-between pt-4 border-t ${classes.border.primary}/50`}>
                     <button
-                      onClick={nextStep}
-                      className="group relative px-6 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-2"
+                      onClick={prevStep}
+                      disabled={currentStep === 1}
+                      className="group relative px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-300 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                     >
-                      <span className="font-medium text-white">Next</span>
-                      <ChevronRight className="w-4 h-4 text-white" />
+                      <ChevronLeft className="w-4 h-4 text-gray-600 group-hover:text-gray-800 transition-colors" />
+                      <span className="font-medium text-gray-700">Previous</span>
                     </button>
-                  ) : (
-                    <button
-                      onClick={handleGenerateDocument}
-                      className="group relative px-6 py-2 bg-green-600 rounded-lg hover:bg-green-700 shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-2"
-                    >
-                      <Zap className="w-4 h-4 text-white" />
-                      <span className="font-medium text-white">
-                        Generate {documentType === 'resume' ? 'Resume' : 'Cover Letter'}
+                    
+                    <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-full">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                      <span className="text-xs font-medium text-gray-700">
+                        Step {currentStep} of 4
                       </span>
-                    </button>
-                  )}
-                </div>
+                    </div>
+                    
+                    {currentStep < 4 ? (
+                      <button
+                        onClick={nextStep}
+                        className="group relative px-6 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-2"
+                      >
+                        <span className="font-medium text-white">Next</span>
+                        <ChevronRight className="w-4 h-4 text-white" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleGenerateDocument}
+                        className="group relative px-6 py-2 bg-green-600 rounded-lg hover:bg-green-700 shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-2"
+                      >
+                        <Zap className="w-4 h-4 text-white" />
+                        <span className="font-medium text-white">
+                          Generate {documentType === 'resume' ? 'Resume' : 'Cover Letter'}
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -833,90 +1053,7 @@ const ResumePage = () => {
         </div>
       </div>
 
-      {/* AI Generation Overlay */}
-      {isGenerating && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className={`${classes.bg.card} ${classes.border.primary} border rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl`}
-          >
-            <div className="text-center">
-              {/* AI Brain Animation */}
-              <div className="relative mb-6">
-                <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                    <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full animate-ping"></div>
-                  </div>
-                </div>
-                <div className="absolute inset-0 w-20 h-20 border-4 border-blue-300 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
-              </div>
 
-              <h3 className={`text-2xl font-bold ${classes.text.primary} mb-2`}>
-                AI is Generating Your {documentType === 'resume' ? 'Resume' : 'Cover Letter'}
-              </h3>
-              <p className={`${classes.text.secondary} mb-6`}>
-                Our AI is analyzing your achievements and creating a professional document...
-              </p>
-
-              {/* Progress Bar */}
-              <div className="mb-6">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className={classes.text.secondary}>Progress</span>
-                  <span className={`font-medium ${classes.text.primary}`}>{Math.round(generationProgress)}%</span>
-                </div>
-                <div className={`w-full ${classes.bg.tertiary} rounded-full h-3 overflow-hidden`}>
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${generationProgress}%` }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                  />
-                </div>
-              </div>
-
-              {/* Generation Steps */}
-              <div className="space-y-3 text-left">
-                {[
-                  { text: "Analyzing your achievements", completed: generationProgress > 20 },
-                  { text: "Optimizing content structure", completed: generationProgress > 40 },
-                  { text: "Applying professional formatting", completed: generationProgress > 60 },
-                  { text: "Finalizing document", completed: generationProgress > 80 },
-                  { text: "Quality check and optimization", completed: generationProgress > 95 }
-                ].map((step, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                      step.completed 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-gray-200 dark:bg-gray-700'
-                    }`}>
-                      {step.completed ? (
-                        <Check className="w-3 h-3" />
-                      ) : (
-                        <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                      )}
-                    </div>
-                    <span className={`text-sm ${step.completed ? classes.text.primary : classes.text.secondary}`}>
-                      {step.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Estimated Time */}
-              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <p className={`text-sm ${classes.text.secondary}`}>
-                  Estimated time remaining: {Math.max(0, Math.ceil((100 - generationProgress) / 0.83))} seconds
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
     </div>
   )
 }

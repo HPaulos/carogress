@@ -53,48 +53,124 @@ const DocumentDetailsPage = () => {
     
     try {
       setLoading(true)
-      // Mock document data - in real app, this would fetch from API
-      const mockDocument = {
-        id: documentId,
-        type: type,
-        title: type === 'resume' ? 'Software Engineer Resume' : 'Cover Letter for Senior Developer Position',
-        template: type === 'resume' ? 'Modern Professional' : 'Professional',
-        rating: 4.8,
-        downloads: 12,
-        basedOnAchievements: 15,
-        createdAt: new Date().toISOString(),
-        lastModified: new Date().toISOString(),
-        content: type === 'resume' ? {
-          name: 'John Doe',
-          title: 'Senior Software Engineer',
-          email: 'john.doe@email.com',
-          phone: '+1 (555) 123-4567',
-          location: 'San Francisco, CA',
-          summary: 'Experienced software engineer with 5+ years of expertise in full-stack development, specializing in React, Node.js, and cloud technologies. Proven track record of delivering scalable solutions and leading development teams.',
-          experience: [
-            {
-              position: 'Senior Software Engineer',
-              company: 'TechCorp Inc.',
-              duration: '2021 - Present',
-              achievements: [
-                'Led development of microservices architecture serving 1M+ users',
-                'Improved application performance by 40% through optimization',
-                'Mentored 3 junior developers and conducted code reviews'
-              ]
-            },
-            {
-              position: 'Software Engineer',
-              company: 'StartupXYZ',
-              duration: '2019 - 2021',
-              achievements: [
-                'Built and deployed 5+ production applications',
-                'Collaborated with cross-functional teams on agile projects',
-                'Implemented CI/CD pipelines reducing deployment time by 60%'
-              ]
-            }
-          ],
-          skills: ['React', 'Node.js', 'TypeScript', 'AWS', 'Docker', 'MongoDB', 'PostgreSQL', 'GraphQL']
-        } : `Dear Hiring Manager,
+      
+      // Check if this is a generated document (recently created)
+      const isGeneratedDocument = documentId && documentId.length > 10 && !isNaN(documentId)
+      
+      let documentData
+      
+      if (isGeneratedDocument) {
+        // This is a generated document - create detailed content based on type
+        documentData = {
+          id: documentId,
+          type: type,
+          title: type === 'resume' ? 'AI Generated Resume' : 'AI Generated Cover Letter',
+          template: type === 'resume' ? 'Modern' : 'Professional',
+          rating: 0,
+          downloads: 0,
+          basedOnAchievements: Math.floor(Math.random() * 10) + 5,
+          createdAt: new Date().toISOString(),
+          lastModified: new Date().toISOString(),
+          content: type === 'resume' ? {
+            name: user.name || 'Professional Candidate',
+            title: 'Software Engineer',
+            email: user.email || 'candidate@email.com',
+            phone: '+1 (555) 123-4567',
+            location: 'San Francisco, CA',
+            summary: 'Experienced software engineer with expertise in modern web technologies and full-stack development. Proven track record of delivering scalable solutions and collaborating effectively in agile environments.',
+            experience: [
+              {
+                position: 'Software Engineer',
+                company: 'Tech Company',
+                duration: '2022 - Present',
+                achievements: [
+                  'Developed and maintained web applications using React and Node.js',
+                  'Collaborated with cross-functional teams to deliver high-quality software',
+                  'Implemented new features and improved application performance'
+                ]
+              },
+              {
+                position: 'Junior Developer',
+                company: 'Startup Inc.',
+                duration: '2020 - 2022',
+                achievements: [
+                  'Built responsive user interfaces using modern frameworks',
+                  'Participated in code reviews and contributed to team best practices',
+                  'Worked on bug fixes and feature implementations'
+                ]
+              }
+            ],
+            education: [
+              {
+                degree: 'Bachelor of Science in Computer Science',
+                school: 'University of Technology',
+                year: '2020'
+              }
+            ],
+            skills: ['JavaScript', 'React', 'Node.js', 'Python', 'SQL', 'Git', 'AWS', 'Docker']
+          } : `Dear Hiring Manager,
+
+I am writing to express my strong interest in the Software Engineer position at your company. With experience in modern web technologies and a passion for creating impactful solutions, I am excited about the opportunity to contribute to your team.
+
+Throughout my career, I have demonstrated expertise in full-stack development, including React, Node.js, and cloud platforms. I have successfully collaborated with cross-functional teams, delivered high-quality software, and continuously improved my technical skills.
+
+My experience includes:
+• Developing and maintaining web applications using modern frameworks
+• Collaborating with cross-functional teams in agile environments
+• Implementing new features and improving application performance
+• Participating in code reviews and contributing to team best practices
+• Building responsive user interfaces and working on bug fixes
+
+I am particularly drawn to your company's innovative approach to technology and commitment to excellence. I believe my technical skills, collaborative approach, and passion for learning align perfectly with your team's goals.
+
+I would welcome the opportunity to discuss how my background and skills can contribute to your organization's success. Thank you for considering my application.
+
+Best regards,
+${user.name || 'Professional Candidate'}`
+        }
+      } else {
+        // Use existing mock document data for saved documents
+        documentData = {
+          id: documentId,
+          type: type,
+          title: type === 'resume' ? 'Software Engineer Resume' : 'Cover Letter for Senior Developer Position',
+          template: type === 'resume' ? 'Modern Professional' : 'Professional',
+          rating: 4.8,
+          downloads: 12,
+          basedOnAchievements: 15,
+          createdAt: new Date().toISOString(),
+          lastModified: new Date().toISOString(),
+          content: type === 'resume' ? {
+            name: 'John Doe',
+            title: 'Senior Software Engineer',
+            email: 'john.doe@email.com',
+            phone: '+1 (555) 123-4567',
+            location: 'San Francisco, CA',
+            summary: 'Experienced software engineer with 5+ years of expertise in full-stack development, specializing in React, Node.js, and cloud technologies. Proven track record of delivering scalable solutions and leading development teams.',
+            experience: [
+              {
+                position: 'Senior Software Engineer',
+                company: 'TechCorp Inc.',
+                duration: '2021 - Present',
+                achievements: [
+                  'Led development of microservices architecture serving 1M+ users',
+                  'Improved application performance by 40% through optimization',
+                  'Mentored 3 junior developers and conducted code reviews'
+                ]
+              },
+              {
+                position: 'Software Engineer',
+                company: 'StartupXYZ',
+                duration: '2019 - 2021',
+                achievements: [
+                  'Built and deployed 5+ production applications',
+                  'Collaborated with cross-functional teams on agile projects',
+                  'Implemented CI/CD pipelines reducing deployment time by 60%'
+                ]
+              }
+            ],
+            skills: ['React', 'Node.js', 'TypeScript', 'AWS', 'Docker', 'MongoDB', 'PostgreSQL', 'GraphQL']
+          } : `Dear Hiring Manager,
 
 I am writing to express my strong interest in the Senior Software Engineer position at your company. With over 5 years of experience in full-stack development and a proven track record of delivering scalable solutions, I am excited about the opportunity to contribute to your team.
 
@@ -113,9 +189,10 @@ I would welcome the opportunity to discuss how my background and skills can cont
 
 Best regards,
 John Doe`
+        }
       }
       
-      setDocument(mockDocument)
+      setDocument(documentData)
     } catch (error) {
       console.error('Error loading document:', error)
       toast.error('Failed to load document')

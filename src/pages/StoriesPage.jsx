@@ -254,9 +254,10 @@ The impact was transformative: project delivery time improved by 30%, and team s
                     { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
                     { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
                     { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
-                    { title: 'Practice Interview', icon: MessageSquare, action: () => window.location.href = '/interview' },
+                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
                     { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
-                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' }
+                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
+                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
                   ].map((item, index) => (
                     <button
                       key={index}

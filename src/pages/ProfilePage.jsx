@@ -29,7 +29,12 @@ import {
   CheckCircle,
   Clock,
   Eye,
-  EyeOff
+  EyeOff,
+  Home,
+  BookOpen,
+  Sparkles,
+  Settings,
+  Camera
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
@@ -46,6 +51,7 @@ const ProfilePage = () => {
   const [newSkill, setNewSkill] = useState('')
   const [newGoal, setNewGoal] = useState('')
   const [newSocialLink, setNewSocialLink] = useState({ label: '', url: '' })
+  const [showSocialForm, setShowSocialForm] = useState(false)
 
   useEffect(() => {
     loadProfile()
@@ -103,8 +109,8 @@ const ProfilePage = () => {
           {
             id: 3,
             type: 'interview',
-            title: 'Practice Interview',
-            description: 'Completed mock interview session',
+            title: 'Practice Session',
+            description: 'Completed behavioral interview practice',
             date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
             points: 30
           }
@@ -121,16 +127,11 @@ const ProfilePage = () => {
   }
 
   const handleSave = () => {
+    setEditing(false)
     toast.success('Profile updated successfully!')
-    setEditing(false)
   }
 
-  const handleCancel = () => {
-    setEditing(false)
-    loadProfile() // Reset to original data
-  }
-
-  const addSkill = () => {
+  const handleAddSkill = () => {
     if (newSkill.trim()) {
       setProfile(prev => ({
         ...prev,
@@ -141,7 +142,7 @@ const ProfilePage = () => {
     }
   }
 
-  const removeSkill = (skillToRemove) => {
+  const handleRemoveSkill = (skillToRemove) => {
     setProfile(prev => ({
       ...prev,
       skills: prev.skills.filter(skill => skill !== skillToRemove)
@@ -149,7 +150,7 @@ const ProfilePage = () => {
     toast.success('Skill removed!')
   }
 
-  const addGoal = () => {
+  const handleAddGoal = () => {
     if (newGoal.trim()) {
       setProfile(prev => ({
         ...prev,
@@ -160,7 +161,7 @@ const ProfilePage = () => {
     }
   }
 
-  const removeGoal = (goalToRemove) => {
+  const handleRemoveGoal = (goalToRemove) => {
     setProfile(prev => ({
       ...prev,
       goals: prev.goals.filter(goal => goal !== goalToRemove)
@@ -168,44 +169,29 @@ const ProfilePage = () => {
     toast.success('Goal removed!')
   }
 
-  const addSocialLink = () => {
+  const handleAddSocialLink = () => {
     if (newSocialLink.label.trim() && newSocialLink.url.trim()) {
       setProfile(prev => ({
         ...prev,
         socialLinks: [...prev.socialLinks, { ...newSocialLink }]
       }))
       setNewSocialLink({ label: '', url: '' })
+      setShowSocialForm(false)
       toast.success('Social link added!')
     }
   }
 
-  const removeSocialLink = (linkToRemove) => {
+  const handleCancelSocialLink = () => {
+    setNewSocialLink({ label: '', url: '' })
+    setShowSocialForm(false)
+  }
+
+  const handleRemoveSocialLink = (linkToRemove) => {
     setProfile(prev => ({
       ...prev,
-      socialLinks: prev.socialLinks.filter(link => link.url !== linkToRemove.url)
+      socialLinks: prev.socialLinks.filter(link => link.label !== linkToRemove.label)
     }))
     toast.success('Social link removed!')
-  }
-
-  const getSocialIcon = (iconName) => {
-    const icons = {
-      linkedin: Linkedin,
-      github: Github,
-      twitter: Twitter,
-      instagram: Instagram,
-      facebook: Facebook,
-      globe: Globe
-    }
-    return icons[iconName] || Globe
-  }
-
-  const getActivityIcon = (type) => {
-    const icons = {
-      achievement: Award,
-      document: FileText,
-      interview: MessageSquare
-    }
-    return icons[type] || CheckCircle
   }
 
   if (loading) {
@@ -216,12 +202,12 @@ const ProfilePage = () => {
     )
   }
 
-  if (!user) {
+  if (!user || !profile) {
     return (
       <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center`}>
         <div className="text-center">
-          <h2 className={`text-2xl font-bold ${classes.text.primary} mb-4`}>Please sign in to view your profile</h2>
-          <p className={classes.text.secondary}>You need to be logged in to access your profile.</p>
+          <h2 className={`text-2xl font-bold ${classes.text.primary} mb-4`}>Profile not found</h2>
+          <p className={classes.text.secondary}>Unable to load profile information.</p>
         </div>
       </div>
     )
@@ -229,186 +215,255 @@ const ProfilePage = () => {
 
   return (
     <div className={`min-h-screen ${classes.bg.primary}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl mb-6 shadow-lg">
-              <User className="w-8 h-8 text-white" />
+      {/* Professional Header */}
+      <div className={`${classes.bg.card} ${classes.border.primary} border-b shadow-sm sticky top-0 z-10`}>
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className={`text-lg font-semibold ${classes.text.primary}`}>Profile</h1>
+              <p className={`text-sm ${classes.text.secondary}`}>
+                Manage your professional information and preferences
+              </p>
             </div>
-            <h1 className={`text-4xl font-bold ${classes.text.primary} mb-4`}>
-              Profile
-            </h1>
-            <p className={`text-lg ${classes.text.secondary} max-w-2xl mx-auto`}>
-              Manage your personal information, skills, goals, and achievements
-            </p>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setEditing(!editing)}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${
+                  editing 
+                    ? 'bg-green-600 hover:bg-green-700 text-white' 
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+              >
+                {editing ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
+                {editing ? 'Save Changes' : 'Edit Profile'}
+              </button>
+            </div>
           </div>
-        </motion.div>
+        </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Profile Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Profile Header Card */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className={`${classes.bg.card} rounded-2xl border ${classes.border.primary} overflow-hidden shadow-xl`}
-            >
-              {/* Cover Image */}
-              <div className="relative h-48 bg-gradient-to-r from-purple-500 to-pink-500">
-                <img 
-                  src={profile.coverImage} 
-                  alt="Cover" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/20"></div>
-                
-                {/* Edit Button */}
-                <div className="absolute top-4 right-4">
-                  <button
-                    onClick={() => setEditing(!editing)}
-                    className={`p-2 ${classes.bg.card}/80 backdrop-blur-sm rounded-lg hover:${classes.bg.tertiary} transition-colors`}
-                  >
-                    {editing ? (
-                      <X className={`w-5 h-5 ${classes.text.secondary}`} />
-                    ) : (
-                      <Edit3 className={`w-5 h-5 ${classes.text.secondary}`} />
-                    )}
-                  </button>
+      {/* Three Column Layout */}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left Sidebar - Quick Access */}
+          <div className="col-span-3">
+            <div className="sticky top-24">
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Quick Access</h3>
+                <div className="space-y-2">
+                  {[
+                    { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
+                    { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
+                    { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
+                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
+                    { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
+                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
+                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
+                  ].map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={item.action}
+                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${classes.text.secondary} hover:${classes.text.primary}`}
+                    >
+                      <item.icon className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
+              
+              {/* Profile Stats */}
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-3`}>Profile Stats</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Level</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.level}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Experience</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.experience} XP</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Streak</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.streak} days</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Achievements</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.achievements}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-              {/* Profile Info */}
-              <div className="relative px-6 pb-6">
+          {/* Middle Column - Main Profile Content */}
+          <div className="col-span-6">
+            {/* Compact Profile Header */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+              <div className="flex items-center gap-4">
                 {/* Avatar */}
-                <div className="absolute -top-16 left-6">
-                  <div className="relative">
-                    <img 
-                      src={profile.avatar} 
-                      alt={profile.name}
-                      className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 shadow-lg"
-                    />
-                    {editing && (
-                      <button className="absolute bottom-2 right-2 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-colors">
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
+                <div className="relative">
+                  <img 
+                    src={profile.avatar} 
+                    alt={profile.name} 
+                    className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-gray-700"
+                  />
+                  {editing && (
+                    <button className="absolute bottom-0 right-0 p-1 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors">
+                      <Camera className="w-3 h-3 text-white" />
+                    </button>
+                  )}
                 </div>
-
-                {/* Profile Details */}
-                <div className="pt-20">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h2 className={`text-3xl font-bold ${classes.text.primary} mb-2`}>
-                        {profile.name}
-                      </h2>
-                      <p className={`text-xl ${classes.text.secondary} mb-1`}>
-                        {profile.title}
-                      </p>
-                      <p className={`${classes.text.muted}`}>
-                        {profile.company}
-                      </p>
-                    </div>
-                    
-                    {editing && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={handleCancel}
-                          className={`px-4 py-2 ${classes.bg.tertiary} ${classes.text.secondary} rounded-lg hover:${classes.bg.secondary} transition-colors`}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={handleSave}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                        >
-                          Save Changes
-                        </button>
-                      </div>
+                
+                {/* Profile Info */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h2 className={`text-lg font-semibold ${classes.text.primary}`}>
+                      {editing ? (
+                        <input
+                          type="text"
+                          value={profile.name}
+                          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                          className={`px-2 py-1 border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        />
+                      ) : (
+                        profile.name
+                      )}
+                    </h2>
+                    <span className={`text-sm px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full`}>
+                      Level {profile.stats.level}
+                    </span>
+                  </div>
+                  <p className={`text-sm ${classes.text.secondary} mb-1`}>
+                    {editing ? (
+                      <input
+                        type="text"
+                        value={profile.title}
+                        onChange={(e) => setProfile({ ...profile, title: e.target.value })}
+                        className={`px-2 py-1 border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      />
+                    ) : (
+                      profile.title
                     )}
-                  </div>
-
-                  {/* Contact Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 ${classes.bg.tertiary} rounded-lg flex items-center justify-center`}>
-                        <Mail className={`w-5 h-5 ${classes.text.secondary}`} />
-                      </div>
-                      <div>
-                        <p className={`text-sm ${classes.text.muted}`}>Email</p>
-                        <p className={`${classes.text.primary}`}>{profile.email}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 ${classes.bg.tertiary} rounded-lg flex items-center justify-center`}>
-                        <Phone className={`w-5 h-5 ${classes.text.secondary}`} />
-                      </div>
-                      <div>
-                        <p className={`text-sm ${classes.text.muted}`}>Phone</p>
-                        <p className={`${classes.text.primary}`}>{profile.phone}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 ${classes.bg.tertiary} rounded-lg flex items-center justify-center`}>
-                        <MapPin className={`w-5 h-5 ${classes.text.secondary}`} />
-                      </div>
-                      <div>
-                        <p className={`text-sm ${classes.text.muted}`}>Location</p>
-                        <p className={`${classes.text.primary}`}>{profile.location}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bio */}
-                  <div className="mb-6">
-                    <h3 className={`text-lg font-semibold ${classes.text.primary} mb-3`}>About</h3>
-                    <p className={`${classes.text.secondary} leading-relaxed`}>
-                      {profile.bio}
-                    </p>
-                  </div>
+                  </p>
+                  <p className={`text-xs ${classes.text.secondary}`}>
+                    {editing ? (
+                      <input
+                        type="text"
+                        value={profile.company}
+                        onChange={(e) => setProfile({ ...profile, company: e.target.value })}
+                        className={`px-2 py-1 border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      />
+                    ) : (
+                      profile.company
+                    )}
+                  </p>
                 </div>
               </div>
-            </motion.div>
-
-            {/* Skills Section */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className={`${classes.bg.card} rounded-2xl border ${classes.border.primary} p-6 shadow-xl`}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                    <Award className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className={`text-xl font-bold ${classes.text.primary}`}>Skills</h3>
-                </div>
-                {editing && (
-                  <button className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                    <Plus className="w-4 h-4" />
-                  </button>
+              
+              {/* Bio */}
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-2`}>Bio</h3>
+                {editing ? (
+                  <textarea
+                    value={profile.bio}
+                    onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                    rows={2}
+                    className={`w-full px-3 py-2 border ${classes.border.primary} rounded-lg ${classes.bg.input} ${classes.text.primary} resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                  />
+                ) : (
+                  <p className={`text-sm ${classes.text.secondary} leading-relaxed`}>{profile.bio}</p>
                 )}
               </div>
+            </div>
 
-              <div className="flex flex-wrap gap-3 mb-4">
+            {/* Contact Info */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Contact Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-gray-400" />
+                    <span className={`text-sm ${classes.text.secondary}`}>
+                      {editing ? (
+                        <input
+                          type="email"
+                          value={profile.email}
+                          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                          className={`w-full px-2 py-1 border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        />
+                      ) : (
+                        profile.email
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-gray-400" />
+                    <span className={`text-sm ${classes.text.secondary}`}>
+                      {editing ? (
+                        <input
+                          type="tel"
+                          value={profile.phone}
+                          onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                          className={`w-full px-2 py-1 border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        />
+                      ) : (
+                        profile.phone
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <span className={`text-sm ${classes.text.secondary}`}>
+                      {editing ? (
+                        <input
+                          type="text"
+                          value={profile.location}
+                          onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                          className={`w-full px-2 py-1 border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        />
+                      ) : (
+                        profile.location
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+            {/* Skills Section */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className={`text-lg font-semibold ${classes.text.primary}`}>Skills</h3>
+                {editing && (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newSkill}
+                      onChange={(e) => setNewSkill(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                      placeholder="Add skill..."
+                      className={`px-3 py-1 text-sm border ${classes.border.primary} rounded-lg ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                    />
+                    <button
+                      onClick={handleAddSkill}
+                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
                 {profile.skills.map((skill, index) => (
                   <div
                     key={index}
-                    className={`flex items-center gap-2 px-3 py-2 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium`}
+                    className={`px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 flex items-center gap-2`}
                   >
                     <span>{skill}</span>
                     {editing && (
                       <button
-                        onClick={() => removeSkill(skill)}
-                        className="hover:text-red-600 transition-colors"
+                        onClick={() => handleRemoveSkill(skill)}
+                        className="hover:text-blue-800 dark:hover:text-blue-300"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -416,60 +471,45 @@ const ProfilePage = () => {
                   </div>
                 ))}
               </div>
-
-              {editing && (
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addSkill()}
-                    placeholder="Add a new skill..."
-                    className={`flex-1 px-3 py-2 ${classes.bg.input} border ${classes.border.primary} rounded-lg ${classes.text.primary} placeholder-${classes.text.muted} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                  />
-                  <button
-                    onClick={addSkill}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                  >
-                    Add
-                  </button>
-                </div>
-              )}
-            </motion.div>
+            </div>
 
             {/* Goals Section */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className={`${classes.bg.card} rounded-2xl border ${classes.border.primary} p-6 shadow-xl`}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                    <Target className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className={`text-xl font-bold ${classes.text.primary}`}>Career Goals</h3>
-                </div>
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className={`text-lg font-semibold ${classes.text.primary}`}>Career Goals</h3>
                 {editing && (
-                  <button className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
-                    <Plus className="w-4 h-4" />
-                  </button>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newGoal}
+                      onChange={(e) => setNewGoal(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddGoal()}
+                      placeholder="Add goal..."
+                      className={`px-3 py-1 text-sm border ${classes.border.primary} rounded-lg ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                    />
+                    <button
+                      onClick={handleAddGoal}
+                      className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
                 )}
               </div>
-
-              <div className="space-y-3 mb-4">
+              <div className="space-y-3">
                 {profile.goals.map((goal, index) => (
                   <div
                     key={index}
-                    className={`flex items-center gap-3 p-3 ${classes.bg.tertiary} rounded-lg`}
+                    className={`flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800`}
                   >
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className={`${classes.text.primary} flex-1`}>{goal}</span>
+                    <div className="flex items-center gap-3">
+                      <Target className="w-4 h-4 text-green-600" />
+                      <span className={`text-sm ${classes.text.primary}`}>{goal}</span>
+                    </div>
                     {editing && (
                       <button
-                        onClick={() => removeGoal(goal)}
-                        className="hover:text-red-600 transition-colors"
+                        onClick={() => handleRemoveGoal(goal)}
+                        className="text-red-500 hover:text-red-700"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -477,211 +517,127 @@ const ProfilePage = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
 
-              {editing && (
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newGoal}
-                    onChange={(e) => setNewGoal(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addGoal()}
-                    placeholder="Add a new goal..."
-                    className={`flex-1 px-3 py-2 ${classes.bg.input} border ${classes.border.primary} rounded-lg ${classes.text.primary} placeholder-${classes.text.muted} focus:outline-none focus:ring-2 focus:ring-green-500`}
-                  />
-                  <button
-                    onClick={addGoal}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-                  >
-                    Add
-                  </button>
-                </div>
-              )}
-            </motion.div>
-
-            {/* Social Links Section */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className={`${classes.bg.card} rounded-2xl border ${classes.border.primary} p-6 shadow-xl`}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Globe className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className={`text-xl font-bold ${classes.text.primary}`}>Social Links</h3>
-                </div>
-                {editing && (
-                  <button className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
-                    <Plus className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              <div className="space-y-3 mb-4">
-                {profile.socialLinks.map((link, index) => {
-                  const IconComponent = getSocialIcon(link.icon)
-                  return (
-                    <div
-                      key={index}
-                      className={`flex items-center gap-3 p-3 ${classes.bg.tertiary} rounded-lg`}
+          {/* Right Sidebar - Social Links & Activity */}
+          <div className="col-span-3">
+            <div className="sticky top-24">
+              {/* Social Links */}
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mb-4`}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className={`text-sm font-medium ${classes.text.primary}`}>Social Links</h3>
+                  {editing && !showSocialForm && (
+                    <button
+                      onClick={() => setShowSocialForm(true)}
+                      className="p-1 text-blue-600 hover:text-blue-700"
                     >
-                      <IconComponent className={`w-5 h-5 ${classes.text.secondary}`} />
-                      <div className="flex-1">
-                        <p className={`${classes.text.primary} font-medium`}>{link.label}</p>
-                        <p className={`${classes.text.muted} text-sm`}>{link.url}</p>
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                {/* Add Social Link Form */}
+                {showSocialForm && (
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg mb-3">
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        value={newSocialLink.label}
+                        onChange={(e) => setNewSocialLink(prev => ({ ...prev, label: e.target.value }))}
+                        placeholder="Platform name (e.g., LinkedIn, GitHub)..."
+                        className={`w-full px-2 py-1 text-xs border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      />
+                      <input
+                        type="url"
+                        value={newSocialLink.url}
+                        onChange={(e) => setNewSocialLink(prev => ({ ...prev, url: e.target.value }))}
+                        placeholder="URL..."
+                        className={`w-full px-2 py-1 text-xs border ${classes.border.primary} rounded ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleAddSocialLink}
+                          className="flex-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors"
+                        >
+                          Add
+                        </button>
+                        <button
+                          onClick={handleCancelSocialLink}
+                          className="px-2 py-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {profile.socialLinks.map((link, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                          <Linkedin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <p className={`text-xs font-medium ${classes.text.primary}`}>{link.label}</p>
+                          <p className={`text-xs ${classes.text.secondary}`}>{link.url}</p>
+                        </div>
                       </div>
                       {editing && (
                         <button
-                          onClick={() => removeSocialLink(link)}
-                          className="hover:text-red-600 transition-colors"
+                          onClick={() => handleRemoveSocialLink(link)}
+                          className="text-red-500 hover:text-red-700"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       )}
                     </div>
-                  )
-                })}
+                  ))}
+                </div>
               </div>
 
-              {editing && (
+              {/* Recent Activity */}
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Recent Activity</h3>
                 <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={newSocialLink.label}
-                    onChange={(e) => setNewSocialLink(prev => ({ ...prev, label: e.target.value }))}
-                    placeholder="Platform name (e.g., LinkedIn, GitHub)..."
-                    className={`w-full px-3 py-2 ${classes.bg.input} border ${classes.border.primary} rounded-lg ${classes.text.primary} placeholder-${classes.text.muted} focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newSocialLink.url}
-                      onChange={(e) => setNewSocialLink(prev => ({ ...prev, url: e.target.value }))}
-                      placeholder="URL..."
-                      className={`flex-1 px-3 py-2 ${classes.bg.input} border ${classes.border.primary} rounded-lg ${classes.text.primary} placeholder-${classes.text.muted} focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                    />
-                    <button
-                      onClick={addSocialLink}
-                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Stats Card */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className={`${classes.bg.card} rounded-2xl border ${classes.border.primary} p-6 shadow-xl`}
-            >
-              <h3 className={`text-xl font-bold ${classes.text.primary} mb-6`}>Your Stats</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-                      <Award className="w-4 h-4 text-white" />
-                    </div>
-                    <span className={`${classes.text.primary}`}>Achievements</span>
-                  </div>
-                  <span className={`font-bold ${classes.text.primary}`}>{profile.stats.achievements}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-red-400 to-pink-500 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-white" />
-                    </div>
-                    <span className={`${classes.text.primary}`}>Streak</span>
-                  </div>
-                  <span className={`font-bold ${classes.text.primary}`}>{profile.stats.streak} days</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
-                      <Star className="w-4 h-4 text-white" />
-                    </div>
-                    <span className={`${classes.text.primary}`}>Level</span>
-                  </div>
-                  <span className={`font-bold ${classes.text.primary}`}>{profile.stats.level}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center">
-                      <Users className="w-4 h-4 text-white" />
-                    </div>
-                    <span className={`${classes.text.primary}`}>Experience</span>
-                  </div>
-                  <span className={`font-bold ${classes.text.primary}`}>{profile.stats.experience} XP</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
-                      <FileText className="w-4 h-4 text-white" />
-                    </div>
-                    <span className={`${classes.text.primary}`}>Documents</span>
-                  </div>
-                  <span className={`font-bold ${classes.text.primary}`}>{profile.stats.documents}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center">
-                      <MessageSquare className="w-4 h-4 text-white" />
-                    </div>
-                    <span className={`${classes.text.primary}`}>Interviews</span>
-                  </div>
-                  <span className={`font-bold ${classes.text.primary}`}>{profile.stats.interviews}</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Recent Activity */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className={`${classes.bg.card} rounded-2xl border ${classes.border.primary} p-6 shadow-xl`}
-            >
-              <h3 className={`text-xl font-bold ${classes.text.primary} mb-6`}>Recent Activity</h3>
-              
-              <div className="space-y-4">
-                {profile.recentActivity.map((activity) => {
-                  const IconComponent = getActivityIcon(activity.type)
-                  return (
+                  {profile.recentActivity.map((activity) => (
                     <div key={activity.id} className="flex items-start gap-3">
-                      <div className={`w-8 h-8 ${classes.bg.tertiary} rounded-lg flex items-center justify-center flex-shrink-0`}>
-                        <IconComponent className={`w-4 h-4 ${classes.text.secondary}`} />
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        activity.type === 'achievement' ? 'bg-green-100 dark:bg-green-900/30' :
+                        activity.type === 'document' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                        'bg-purple-100 dark:bg-purple-900/30'
+                      }`}>
+                        {activity.type === 'achievement' ? (
+                          <Award className="w-3 h-3 text-green-600 dark:text-green-400" />
+                        ) : activity.type === 'document' ? (
+                          <FileText className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                        ) : (
+                          <MessageSquare className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`${classes.text.primary} font-medium text-sm`}>{activity.title}</p>
-                        <p className={`${classes.text.muted} text-xs`}>{activity.description}</p>
+                        <p className={`text-xs font-medium ${classes.text.primary} truncate`}>
+                          {activity.title}
+                        </p>
+                        <p className={`text-xs ${classes.text.secondary} truncate`}>
+                          {activity.description}
+                        </p>
                         <div className="flex items-center gap-2 mt-1">
-                          <Clock className={`w-3 h-3 ${classes.text.muted}`} />
-                          <span className={`text-xs ${classes.text.muted}`}>
+                          <Clock className="w-3 h-3 text-gray-400" />
+                          <span className={`text-xs ${classes.text.secondary}`}>
                             {activity.date.toLocaleDateString()}
                           </span>
-                          <span className={`text-xs text-green-600 dark:text-green-400 font-medium`}>
+                          <span className={`text-xs font-medium text-green-600 dark:text-green-400`}>
                             +{activity.points} XP
                           </span>
                         </div>
                       </div>
                     </div>
-                  )
-                })}
+                  ))}
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

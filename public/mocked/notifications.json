@@ -1,0 +1,112 @@
+{
+  "notifications": [
+    {
+      "id": "1",
+      "userId": "1",
+      "title": "New Achievement Unlocked!",
+      "message": "Congratulations! You've earned the 'Project Leader' badge for successfully leading your team.",
+      "type": "achievement",
+      "read": false,
+      "createdAt": "2024-02-20T14:30:00Z"
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "title": "Resume Generated Successfully",
+      "message": "Your AI-generated resume is ready! It's based on 12 of your achievements and optimized for software engineering roles.",
+      "type": "document",
+      "read": false,
+      "createdAt": "2024-02-20T12:15:00Z"
+    },
+    {
+      "id": "3",
+      "userId": "1",
+      "title": "Interview Question Available",
+      "message": "New interview question generated based on your recent achievement: 'Led successful project launch'",
+      "type": "interview",
+      "read": true,
+      "createdAt": "2024-02-20T10:45:00Z"
+    },
+    {
+      "id": "4",
+      "userId": "1",
+      "title": "Level Up!",
+      "message": "Congratulations! You've reached Level 5. Keep up the great work!",
+      "type": "level",
+      "read": true,
+      "createdAt": "2024-02-19T16:20:00Z"
+    },
+    {
+      "id": "5",
+      "userId": "1",
+      "title": "Streak Extended",
+      "message": "Great job! You've maintained your 7-day achievement streak. Don't break the chain!",
+      "type": "streak",
+      "read": true,
+      "createdAt": "2024-02-19T09:00:00Z"
+    },
+    {
+      "id": "6",
+      "userId": "1",
+      "title": "AI Career Coach Available",
+      "message": "Your AI career coach has new insights based on your recent achievements. Chat now for personalized advice!",
+      "type": "ai",
+      "read": false,
+      "createdAt": "2024-02-18T15:30:00Z"
+    },
+    {
+      "id": "7",
+      "userId": "1",
+      "title": "Cover Letter Template Updated",
+      "message": "New cover letter templates are available! Check them out to improve your applications.",
+      "type": "template",
+      "read": true,
+      "createdAt": "2024-02-18T11:15:00Z"
+    },
+    {
+      "id": "8",
+      "userId": "1",
+      "title": "Story Published",
+      "message": "Your story 'From Junior to Senior: My Career Journey' has been published and is getting great engagement!",
+      "type": "story",
+      "read": true,
+      "createdAt": "2024-02-17T14:45:00Z"
+    },
+    {
+      "id": "9",
+      "userId": "2",
+      "title": "Product Launch Success",
+      "message": "Congratulations! Your product feature launch increased user engagement by 35%!",
+      "type": "achievement",
+      "read": false,
+      "createdAt": "2024-02-20T13:00:00Z"
+    },
+    {
+      "id": "10",
+      "userId": "2",
+      "title": "User Research Insights",
+      "message": "New user research insights are available based on your recent product improvements.",
+      "type": "insight",
+      "read": false,
+      "createdAt": "2024-02-20T10:30:00Z"
+    },
+    {
+      "id": "11",
+      "userId": "3",
+      "title": "ML Model Deployed",
+      "message": "Your machine learning model has been successfully deployed to production!",
+      "type": "achievement",
+      "read": false,
+      "createdAt": "2024-02-20T12:00:00Z"
+    },
+    {
+      "id": "12",
+      "userId": "3",
+      "title": "Research Paper Accepted",
+      "message": "Congratulations! Your research paper has been accepted at the prestigious ML conference!",
+      "type": "achievement",
+      "read": false,
+      "createdAt": "2024-02-19T17:30:00Z"
+    }
+  ]
+}

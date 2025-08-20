@@ -1,0 +1,104 @@
+{
+  "questions": [
+    {
+      "id": "1",
+      "question": "Tell me about a time when you had to lead a team through a challenging project. How did you ensure success?",
+      "category": "leadership",
+      "difficulty": "medium",
+      "basedOnAchievement": "Led team of 5 developers to deliver project ahead of schedule",
+      "suggestedAnswer": "Focus on your leadership style, communication strategies, and how you motivated the team. Mention specific challenges and solutions.",
+      "keyPoints": ["Leadership approach", "Team motivation", "Problem-solving", "Results achieved"],
+      "createdAt": "2024-02-15T10:30:00Z"
+    },
+    {
+      "id": "2",
+      "question": "Describe a technical challenge you faced and how you solved it. What was your approach?",
+      "category": "technical",
+      "difficulty": "hard",
+      "basedOnAchievement": "Improved system capacity by 300% through architecture overhaul",
+      "suggestedAnswer": "Walk through your technical problem-solving process, including analysis, solution design, and implementation.",
+      "keyPoints": ["Problem analysis", "Technical solution", "Implementation strategy", "Impact measurement"],
+      "createdAt": "2024-02-12T14:20:00Z"
+    },
+    {
+      "id": "3",
+      "question": "Give me an example of how you improved a process or system. What was the outcome?",
+      "category": "problem-solving",
+      "difficulty": "medium",
+      "basedOnAchievement": "Reduced customer response time by 80% with AI chatbot implementation",
+      "suggestedAnswer": "Explain your process improvement methodology and quantify the results achieved.",
+      "keyPoints": ["Process analysis", "Solution development", "Implementation", "Measurable results"],
+      "createdAt": "2024-02-10T09:15:00Z"
+    },
+    {
+      "id": "4",
+      "question": "Tell me about a time when you had to work with a difficult stakeholder. How did you handle it?",
+      "category": "behavioral",
+      "difficulty": "medium",
+      "basedOnAchievement": "Successfully coordinated with multiple teams during system migration",
+      "suggestedAnswer": "Focus on communication skills, empathy, and conflict resolution strategies.",
+      "keyPoints": ["Communication approach", "Empathy and understanding", "Conflict resolution", "Relationship building"],
+      "createdAt": "2024-02-08T16:45:00Z"
+    },
+    {
+      "id": "5",
+      "question": "Describe a situation where you had to make a decision with incomplete information. What was your process?",
+      "category": "problem-solving",
+      "difficulty": "hard",
+      "basedOnAchievement": "Made critical architecture decisions during system overhaul",
+      "suggestedAnswer": "Explain your decision-making framework and how you manage uncertainty.",
+      "keyPoints": ["Decision framework", "Risk assessment", "Information gathering", "Outcome evaluation"],
+      "createdAt": "2024-02-05T11:30:00Z"
+    },
+    {
+      "id": "6",
+      "question": "How do you stay updated with the latest technologies and industry trends?",
+      "category": "learning",
+      "difficulty": "easy",
+      "basedOnAchievement": "Completed advanced certification in cloud architecture",
+      "suggestedAnswer": "Discuss your learning strategies, resources you use, and how you apply new knowledge.",
+      "keyPoints": ["Learning resources", "Continuous improvement", "Practical application", "Knowledge sharing"],
+      "createdAt": "2024-02-03T13:20:00Z"
+    },
+    {
+      "id": "7",
+      "question": "Tell me about a time when you had to mentor or teach someone. What was your approach?",
+      "category": "leadership",
+      "difficulty": "medium",
+      "basedOnAchievement": "Mentored 3 junior developers and improved team productivity",
+      "suggestedAnswer": "Focus on your mentoring style, how you assessed their needs, and the outcomes achieved.",
+      "keyPoints": ["Assessment of needs", "Teaching approach", "Progress tracking", "Outcomes achieved"],
+      "createdAt": "2024-02-01T10:15:00Z"
+    },
+    {
+      "id": "8",
+      "question": "Describe a project where you had to work with a tight deadline. How did you manage it?",
+      "category": "project-management",
+      "difficulty": "medium",
+      "basedOnAchievement": "Delivered critical project ahead of schedule with high quality",
+      "suggestedAnswer": "Explain your project management approach, prioritization strategies, and how you ensured quality.",
+      "keyPoints": ["Project planning", "Prioritization", "Time management", "Quality assurance"],
+      "createdAt": "2024-01-30T15:40:00Z"
+    },
+    {
+      "id": "9",
+      "question": "How do you handle feedback and criticism? Can you give me an example?",
+      "category": "behavioral",
+      "difficulty": "easy",
+      "basedOnAchievement": "Improved code quality standards based on team feedback",
+      "suggestedAnswer": "Show your growth mindset and how you use feedback to improve.",
+      "keyPoints": ["Receptiveness", "Growth mindset", "Action taken", "Results achieved"],
+      "createdAt": "2024-01-28T12:25:00Z"
+    },
+    {
+      "id": "10",
+      "question": "Tell me about a time when you had to learn a new technology quickly. How did you approach it?",
+      "category": "learning",
+      "difficulty": "medium",
+      "basedOnAchievement": "Learned new framework and implemented it in production within 2 weeks",
+      "suggestedAnswer": "Discuss your learning methodology and how you applied the new knowledge.",
+      "keyPoints": ["Learning strategy", "Resource utilization", "Practical application", "Results achieved"],
+      "createdAt": "2024-01-25T09:50:00Z"
+    }
+  ]
+}

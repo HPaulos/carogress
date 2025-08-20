@@ -1,0 +1,122 @@
+{
+  "resumes": [
+    {
+      "id": "1",
+      "userId": "1",
+      "title": "Software Engineer Resume",
+      "type": "resume",
+      "template": "Modern",
+      "content": {
+        "name": "John Doe",
+        "title": "Senior Software Engineer",
+        "email": "john@example.com",
+        "phone": "+1 (555) 123-4567",
+        "location": "San Francisco, CA",
+        "summary": "Experienced software engineer with expertise in modern web technologies and full-stack development. Proven track record of delivering scalable solutions and collaborating effectively in agile environments.",
+        "experience": [
+          {
+            "position": "Senior Software Engineer",
+            "company": "Tech Company",
+            "duration": "2022 - Present",
+            "achievements": [
+              "Led development of microservices architecture serving 1M+ users",
+              "Improved system performance by 60% through optimization",
+              "Mentored 3 junior developers and conducted code reviews"
+            ]
+          },
+          {
+            "position": "Software Engineer",
+            "company": "Startup Inc.",
+            "duration": "2020 - 2022",
+            "achievements": [
+              "Built responsive user interfaces using React and Node.js",
+              "Implemented CI/CD pipeline reducing deployment time by 80%",
+              "Optimized database queries improving response time by 40%"
+            ]
+          }
+        ],
+        "education": [
+          {
+            "degree": "Bachelor of Science in Computer Science",
+            "school": "University of Technology",
+            "year": "2020"
+          }
+        ],
+        "skills": ["JavaScript", "React", "Node.js", "Python", "AWS", "Docker", "Kubernetes", "SQL", "Git"]
+      },
+      "createdAt": "2024-02-13T10:00:00Z",
+      "updatedAt": "2024-02-18T14:30:00Z",
+      "downloads": 5,
+      "rating": 4.8,
+      "basedOnAchievements": 12
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "title": "Senior Developer CV",
+      "type": "resume",
+      "template": "Classic",
+      "content": {
+        "name": "John Doe",
+        "title": "Senior Software Engineer",
+        "email": "john@example.com",
+        "phone": "+1 (555) 123-4567",
+        "location": "San Francisco, CA",
+        "summary": "Senior software engineer with 5+ years of experience in building scalable web applications and leading development teams.",
+        "experience": [
+          {
+            "position": "Senior Software Engineer",
+            "company": "Tech Company",
+            "duration": "2022 - Present",
+            "achievements": [
+              "Led development of microservices architecture",
+              "Improved system performance by 60%",
+              "Mentored junior developers"
+            ]
+          }
+        ],
+        "education": [
+          {
+            "degree": "Bachelor of Science in Computer Science",
+            "school": "University of Technology",
+            "year": "2020"
+          }
+        ],
+        "skills": ["JavaScript", "React", "Node.js", "Python", "AWS"]
+      },
+      "createdAt": "2024-02-06T09:00:00Z",
+      "updatedAt": "2024-02-15T16:45:00Z",
+      "downloads": 3,
+      "rating": 4.6,
+      "basedOnAchievements": 8
+    }
+  ],
+  "coverLetters": [
+    {
+      "id": "1",
+      "userId": "1",
+      "title": "Google Application Cover Letter",
+      "type": "cover-letter",
+      "template": "Professional",
+      "content": "Dear Hiring Manager,\n\nI am writing to express my strong interest in the Senior Software Engineer position at Google. With over 5 years of experience in full-stack development and a proven track record of delivering scalable solutions, I am excited about the opportunity to contribute to Google's innovative projects.\n\nThroughout my career, I have demonstrated expertise in modern web technologies, including React, Node.js, and cloud platforms. I have successfully led development teams, implemented microservices architectures, and optimized system performance to handle millions of users.\n\nMy experience includes:\n• Leading development of microservices architecture serving 1M+ users\n• Improving system performance by 60% through optimization strategies\n• Mentoring junior developers and conducting comprehensive code reviews\n• Implementing CI/CD pipelines that reduced deployment time by 80%\n• Optimizing database queries to improve response time by 40%\n\nI am particularly drawn to Google's commitment to innovation and excellence. I believe my technical skills, leadership experience, and passion for creating impactful solutions align perfectly with Google's mission.\n\nI would welcome the opportunity to discuss how my background and skills can contribute to Google's continued success. Thank you for considering my application.\n\nBest regards,\nJohn Doe",
+      "createdAt": "2024-02-17T11:00:00Z",
+      "updatedAt": "2024-02-19T13:20:00Z",
+      "downloads": 2,
+      "rating": 4.7,
+      "basedOnAchievements": 6
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "title": "Microsoft Cover Letter",
+      "type": "cover-letter",
+      "template": "Friendly",
+      "content": "Dear Hiring Manager,\n\nI am excited to apply for the Software Engineer position at Microsoft. As someone who has always admired Microsoft's commitment to empowering people and organizations through technology, I am thrilled about the opportunity to join your team.\n\nWith 5+ years of experience in software development, I have developed a strong foundation in building robust, scalable applications. My expertise spans full-stack development, cloud architecture, and team leadership. I have consistently delivered high-quality solutions that drive business value and improve user experiences.\n\nKey highlights of my experience:\n• Led development teams to deliver critical projects ahead of schedule\n• Implemented microservices architecture that improved system reliability by 60%\n• Mentored junior developers and established best practices\n• Optimized database performance reducing response time by 40%\n• Contributed to open-source projects and technical communities\n\nI am particularly interested in Microsoft's work on cloud computing and AI technologies. I believe my experience with modern development practices and passion for innovation would be valuable to your team.\n\nI would love the opportunity to discuss how I can contribute to Microsoft's mission of empowering every person and organization on the planet to achieve more.\n\nThank you for your consideration.\n\nBest regards,\nJohn Doe",
+      "createdAt": "2024-02-10T15:30:00Z",
+      "updatedAt": "2024-02-12T10:15:00Z",
+      "downloads": 1,
+      "rating": 4.5,
+      "basedOnAchievements": 4
+    }
+  ]
+}

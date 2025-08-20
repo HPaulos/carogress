@@ -40,7 +40,8 @@ import {
   Trash2,
   CalendarDays,
   TrendingUpIcon,
-  Home
+  Home,
+  User
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
@@ -816,9 +817,10 @@ const DashboardPage = () => {
                   {[
                     { title: 'Log Achievement', icon: Plus, action: () => setActiveTab('log') },
                     { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
-                    { title: 'Practice Interview', icon: MessageSquare, action: () => window.location.href = '/interview' },
+                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
                     { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
-                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' }
+                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
+                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
                   ].map((item, index) => (
                     <button
                       key={index}

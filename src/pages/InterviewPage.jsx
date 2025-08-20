@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Plus, Play, CheckCircle, Clock, Target, MessageCircle, Trophy, ArrowRight, Home, FileText, BookOpen, Sparkles, MessageSquare } from 'lucide-react'
+import { Brain, Plus, Play, CheckCircle, Clock, Target, MessageCircle, Trophy, ArrowRight, Home, FileText, BookOpen, Sparkles, MessageSquare, User } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
@@ -300,15 +300,16 @@ const InterviewPage = () => {
                     { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
                     { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
                     { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
-                    { title: 'Practice Interview', icon: MessageSquare, action: () => window.location.href = '/interview' },
+                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
                     { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
-                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' }
+                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
+                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
                   ].map((item, index) => (
                     <button
                       key={index}
                       onClick={item.action}
                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                        item.title === 'Practice Interview'
+                        item.title === 'Interview Prep'
                           ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
                           : `${classes.text.secondary} hover:${classes.text.primary}`
                       }`}

@@ -1,4 +1,6 @@
-// Mock data service for simulating API calls
+// Legacy mock data service - now uses the new API service
+import apiService from './apiService'
+
 class MockDataService {
   constructor() {
     this.baseUrl = '/mocked'

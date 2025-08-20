@@ -119,12 +119,24 @@ const Navbar = () => {
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     className={`flex items-center space-x-2 text-sm font-medium ${classes.text.secondary} hover:text-blue-600 transition-colors`}
                   >
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <span>{user.name}</span>
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                      {user.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                            e.target.nextSibling.style.display = 'flex'
+                          }}
+                        />
+                      ) : null}
+                      <User 
+                        size={16} 
+                        className={`text-gray-500 dark:text-gray-400 ${user.avatar ? 'hidden' : 'block'}`}
+                      />
+                    </div>
+                    <span className="max-w-32 truncate">{user.name}</span>
                     <ChevronDown size={16} />
                   </button>
 
@@ -226,12 +238,43 @@ const Navbar = () => {
               {user ? (
                 <>
                   <hr className={`my-2 ${classes.border.primary}`} />
+                  {/* User Info in Mobile Menu */}
+                  <div className="flex items-center px-3 py-2">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-3">
+                      {user.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                            e.target.nextSibling.style.display = 'flex'
+                          }}
+                        />
+                      ) : null}
+                      <User 
+                        size={20} 
+                        className={`text-gray-500 dark:text-gray-400 ${user.avatar ? 'hidden' : 'block'}`}
+                      />
+                    </div>
+                    <div>
+                      <p className={`text-sm font-medium ${classes.text.primary}`}>{user.name}</p>
+                      <p className={`text-xs ${classes.text.secondary}`}>View Profile</p>
+                    </div>
+                  </div>
                   <Link
                     to="/dashboard"
                     className={`block px-3 py-2 text-sm font-medium ${classes.text.secondary} hover:text-blue-600 hover:${classes.bg.tertiary} rounded-md`}
                     onClick={() => setIsOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    to="/profile"
+                    className={`block px-3 py-2 text-sm font-medium ${classes.text.secondary} hover:text-blue-600 hover:${classes.bg.tertiary} rounded-md`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Profile
                   </Link>
                   <button
                     onClick={() => {
