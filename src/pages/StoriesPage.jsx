@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { PenTool, Plus, BookOpen, Eye, Edit, Trash2, Calendar, User, Trophy, Copy, Heart, Share2, MessageCircle, Clock, TrendingUp, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
+import { PenTool, Plus, BookOpen, Eye, Edit, Trash2, Calendar, User, Trophy, Copy, Heart, Share2, MessageCircle, Clock, TrendingUp, Sparkles, ChevronDown, ChevronUp, Home, FileText, MessageSquare } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
@@ -227,41 +227,78 @@ The impact was transformative: project delivery time improved by 30%, and team s
 
   return (
     <div className={`min-h-screen ${classes.bg.primary}`}>
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Professional Header */}
-        <div className="mb-8">
+      {/* Professional Header */}
+      <div className={`${classes.bg.card} ${classes.border.primary} border-b shadow-sm sticky top-0 z-10`}>
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className={`text-xl font-semibold ${classes.text.primary} mb-1`}>Career Stories</h1>
+              <h1 className={`text-lg font-semibold ${classes.text.primary}`}>Career Stories</h1>
               <p className={`text-sm ${classes.text.secondary}`}>
                 AI-generated narratives based on your achievements and experience
               </p>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-3 mb-6">
-          {categories.map((category) => {
-            const count = category.id === 'all' 
-              ? stories.length 
-              : stories.filter(story => story.category === category.id).length
-            
-            return (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
-                    : `${classes.bg.card} ${classes.text.secondary} hover:${classes.bg.tertiary} border ${classes.border.primary}`
-                }`}
-              >
-                {category.name} ({count})
-              </button>
-            )
-          })}
-        </div>
+      {/* Three Column Layout */}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left Sidebar - Quick Access */}
+          <div className="col-span-3">
+            <div className="sticky top-24">
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Quick Access</h3>
+                <div className="space-y-2">
+                  {[
+                    { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
+                    { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
+                    { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
+                    { title: 'Practice Interview', icon: MessageSquare, action: () => window.location.href = '/interview' },
+                    { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
+                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' }
+                  ].map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={item.action}
+                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                        item.title === 'View Stories'
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
+                          : `${classes.text.secondary} hover:${classes.text.primary}`
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Stories Stats */}
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-3`}>Stories Stats</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Total Stories</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{stories.length}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Categories</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{categories.length - 1}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Total Words</span>
+                    <span className={`font-medium ${classes.text.primary}`}>
+                      {stories.reduce((sum, story) => sum + story.wordCount, 0)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Column - Main Content */}
+          <div className="col-span-6">
 
         {/* Stories Feed */}
         {filteredStories.length > 0 ? (
@@ -430,6 +467,64 @@ The impact was transformative: project delivery time improved by 30%, and team s
             </div>
           </motion.div>
         )}
+          </div>
+
+          {/* Right Sidebar - Story Categories */}
+          <div className="col-span-3">
+            <div className="sticky top-24">
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Story Categories</h3>
+                <div className="space-y-2">
+                  {categories.map((category) => {
+                    const count = category.id === 'all' 
+                      ? stories.length 
+                      : stories.filter(story => story.category === category.id).length;
+                    return (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`w-full flex items-center justify-between p-2 rounded-lg text-xs transition-colors ${
+                          selectedCategory === category.id
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                            : `${classes.text.secondary} hover:${classes.bg.secondary}`
+                        }`}
+                      >
+                        <span>{category.name}</span>
+                        <span className={`font-medium px-2 py-0.5 rounded-full ${
+                          selectedCategory === category.id 
+                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Recent Stories */}
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Recent Stories</h3>
+                <div className="space-y-3">
+                  {stories.slice(0, 5).map((story, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-xs ${classes.text.primary} font-medium truncate`}>
+                          {story.title}
+                        </p>
+                        <p className={`text-xs ${classes.text.secondary} mt-1`}>
+                          {formatTimeAgo(story.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

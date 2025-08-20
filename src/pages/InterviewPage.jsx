@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Plus, Play, CheckCircle, Clock, Target, MessageCircle, Trophy, ArrowRight } from 'lucide-react'
+import { Brain, Plus, Play, CheckCircle, Clock, Target, MessageCircle, Trophy, ArrowRight, Home, FileText, BookOpen, Sparkles, MessageSquare } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
@@ -16,6 +16,7 @@ const InterviewPage = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [userAnswer, setUserAnswer] = useState('')
   const [practiceQuestions, setPracticeQuestions] = useState([])
+  const [expandedQuestion, setExpandedQuestion] = useState(null)
 
   const categories = [
     { id: 'all', name: 'All Questions', count: 0 },
@@ -94,6 +95,10 @@ const InterviewPage = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleViewDetails = (questionId) => {
+    setExpandedQuestion(expandedQuestion === questionId ? null : questionId)
   }
 
   const handleGenerateQuestions = () => {
@@ -261,12 +266,12 @@ const InterviewPage = () => {
 
   return (
     <div className={`min-h-screen ${classes.bg.primary}`}>
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Professional Header */}
-        <div className="mb-8">
+      {/* Professional Header */}
+      <div className={`${classes.bg.card} ${classes.border.primary} border-b shadow-sm sticky top-0 z-10`}>
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className={`text-xl font-semibold ${classes.text.primary} mb-1`}>Interview Preparation</h1>
+              <h1 className={`text-lg font-semibold ${classes.text.primary}`}>Interview Preparation</h1>
               <p className={`text-sm ${classes.text.secondary}`}>
                 Practice with AI-generated questions based on your achievements
               </p>
@@ -280,6 +285,64 @@ const InterviewPage = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Three Column Layout */}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left Sidebar - Quick Access */}
+          <div className="col-span-3">
+            <div className="sticky top-24">
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Quick Access</h3>
+                <div className="space-y-2">
+                  {[
+                    { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
+                    { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
+                    { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
+                    { title: 'Practice Interview', icon: MessageSquare, action: () => window.location.href = '/interview' },
+                    { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
+                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' }
+                  ].map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={item.action}
+                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                        item.title === 'Practice Interview'
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
+                          : `${classes.text.secondary} hover:${classes.text.primary}`
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Interview Stats */}
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-3`}>Interview Stats</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Total Questions</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{questions.length}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Categories</span>
+                    <span className={`font-medium ${classes.text.primary}`}>{categories.length - 1}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className={classes.text.secondary}>Practice Sessions</span>
+                    <span className={`font-medium ${classes.text.primary}`}>0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Column - Main Content */}
+          <div className="col-span-6">
 
         {/* Professional Practice Session Card */}
         <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mb-6`}>
@@ -303,35 +366,7 @@ const InterviewPage = () => {
           </div>
         </div>
 
-        {/* Professional Category Filter */}
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 mb-6">
-          {categories.map((category) => {
-            const count = category.id === 'all' 
-              ? questions.length 
-              : questions.filter(q => q.category === category.id).length
-            
-            return (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all border-b-2 ${
-                  selectedCategory === category.id
-                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-                }`}
-              >
-                {category.name}
-                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                    : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
-                }`}>
-                  {count}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+
 
         {/* Professional Questions List */}
         {filteredQuestions.length > 0 ? (
@@ -377,12 +412,104 @@ const InterviewPage = () => {
                       <div className={`flex items-center gap-2 text-xs ${classes.text.secondary}`}>
                         <span>{question.keyPoints.length} key points</span>
                       </div>
-                      <button className="text-blue-600 hover:text-blue-700 text-xs font-medium">
-                        View Details →
+                      <button 
+                        onClick={() => handleViewDetails(question.id)}
+                        className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center gap-1"
+                      >
+                        {expandedQuestion === question.id ? 'Hide Details' : 'View Details'} 
+                        <svg 
+                          className={`w-3 h-3 transition-transform ${expandedQuestion === question.id ? 'rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
                       </button>
                     </div>
                   </div>
                 </div>
+                
+                {/* Expandable Details Section */}
+                {expandedQuestion === question.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4"
+                  >
+                    <div className="space-y-4">
+                      {/* Category and Difficulty */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Category</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                            question.category === 'behavioral' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' :
+                            question.category === 'technical' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
+                            question.category === 'leadership' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' :
+                            'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
+                          }`}>
+                            {question.category}
+                          </span>
+                        </div>
+                        <div>
+                          <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Difficulty</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                            question.difficulty === 'easy' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
+                            question.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                            'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+                          }`}>
+                            {question.difficulty}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Based on Achievement */}
+                      <div>
+                        <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Based on Achievement</h4>
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                          <p className={`text-xs ${classes.text.secondary}`}>{question.basedOnAchievement}</p>
+                        </div>
+                      </div>
+
+                      {/* Suggested Answer */}
+                      <div>
+                        <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Suggested Answer Approach</h4>
+                        <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                          <p className={`text-xs ${classes.text.secondary} leading-relaxed`}>{question.suggestedAnswer}</p>
+                        </div>
+                      </div>
+
+                      {/* Key Points */}
+                      <div>
+                        <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Key Points to Cover</h4>
+                        <div className="space-y-2">
+                          {question.keyPoints.map((point, index) => (
+                            <div key={index} className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                              <p className={`text-xs ${classes.text.secondary}`}>{point}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <div className="pt-2">
+                        <button
+                          onClick={() => {
+                            setPracticeQuestions([question])
+                            setPracticeMode(true)
+                          }}
+                          className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Play className="w-3 h-3" />
+                          Practice This Question
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             ))}
           </div>
@@ -404,6 +531,62 @@ const InterviewPage = () => {
             </button>
           </div>
         )}
+          </div>
+
+          {/* Right Sidebar - Question Categories */}
+          <div className="col-span-3">
+            <div className="sticky top-24">
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Question Categories</h3>
+                <div className="space-y-2">
+                  {categories.map((category) => {
+                    const count = category.id === 'all' 
+                      ? questions.length 
+                      : questions.filter(q => q.category === category.id).length;
+                    return (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`w-full flex items-center justify-between p-2 rounded-lg text-xs transition-colors ${
+                          selectedCategory === category.id
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                            : `${classes.text.secondary} hover:${classes.bg.secondary}`
+                        }`}
+                      >
+                        <span>{category.name}</span>
+                        <span className={`font-medium px-2 py-0.5 rounded-full ${
+                          selectedCategory === category.id 
+                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Difficulty Distribution */}
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
+                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Difficulty Level</h3>
+                <div className="space-y-3">
+                  {['easy', 'medium', 'hard'].map((difficulty) => {
+                    const count = questions.filter(q => q.difficulty === difficulty).length;
+                    return (
+                      <div key={difficulty} className="flex items-center justify-between">
+                        <span className={`text-xs capitalize ${classes.text.secondary}`}>{difficulty}</span>
+                        <span className={`text-xs font-medium ${classes.text.primary} bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full`}>
+                          {count}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -178,6 +178,65 @@ class MockDataService {
         100
     }
   }
+
+  // Document methods
+  async getDocuments() {
+    // Return mock document data
+    return {
+      resumes: [
+        {
+          id: '1',
+          title: 'Software Engineer Resume',
+          type: 'resume',
+          template: 'Modern',
+          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          downloads: 5,
+          rating: 4.8,
+          basedOnAchievements: 12,
+          content: { sections: ['experience', 'education', 'skills'] }
+        },
+        {
+          id: '2',
+          title: 'Senior Developer CV',
+          type: 'resume',
+          template: 'Classic',
+          createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+          updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+          downloads: 3,
+          rating: 4.6,
+          basedOnAchievements: 8,
+          content: { sections: ['experience', 'education', 'skills'] }
+        }
+      ],
+      coverLetters: [
+        {
+          id: '1',
+          title: 'Google Application Cover Letter',
+          type: 'cover-letter',
+          template: 'Professional',
+          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          downloads: 2,
+          rating: 4.7,
+          basedOnAchievements: 6,
+          content: 'Professional cover letter content...'
+        },
+        {
+          id: '2',
+          title: 'Microsoft Cover Letter',
+          type: 'cover-letter',
+          template: 'Friendly',
+          createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+          updatedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+          downloads: 1,
+          rating: 4.5,
+          basedOnAchievements: 4,
+          content: 'Friendly cover letter content...'
+        }
+      ]
+    }
+  }
 }
 
 export default new MockDataService()
