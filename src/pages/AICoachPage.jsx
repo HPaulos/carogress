@@ -238,49 +238,51 @@ const AICoachPage = () => {
   }
 
   return (
-    <div className="h-screen w-screen bg-white dark:bg-secondary-900 flex overflow-hidden">
+    <div className="h-screen w-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex overflow-hidden">
       {/* Sidebar */}
-      <div className="w-80 bg-secondary-800 dark:bg-secondary-900 flex flex-col">
+      <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col shadow-xl">
         {/* Header */}
-        <div className="p-4 border-b border-secondary-700">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-cyan-500/10 to-magenta-500/10">
+          <div className="flex items-center justify-between mb-3">
             <button
               onClick={() => navigate('/')}
-              className="flex items-center text-secondary-300 hover:text-white transition-colors"
+              className="flex items-center text-gray-600 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all duration-300 hover:scale-105"
             >
-              <ArrowLeft size={20} className="mr-2" />
+              <ArrowLeft size={18} className="mr-2" />
               Back
             </button>
             <button
               onClick={createNewConversation}
-              className="p-2 text-secondary-300 hover:text-white hover:bg-secondary-700 rounded-lg transition-colors"
+              className="p-2 text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-magenta-500 rounded-lg transition-all duration-300 hover:shadow-lg"
             >
-              <Plus size={20} />
+              <Plus size={18} />
             </button>
           </div>
-          <h1 className="text-xl font-bold text-white">AI Career Coach</h1>
-          <p className="text-sm text-secondary-400 mt-1">Your personal career assistant</p>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-magenta-600 bg-clip-text text-transparent">AI Career Coach</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Your personal career assistant</p>
         </div>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="flex-1 overflow-y-auto min-h-0 p-3">
           {conversations.map((conversation) => (
             <div
               key={conversation.id}
-              className={`p-4 border-b border-secondary-700 cursor-pointer hover:bg-secondary-700 transition-colors ${
-                currentConversation?.id === conversation.id ? 'bg-secondary-700' : ''
+              className={`p-3 mb-2 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-sm ${
+                currentConversation?.id === conversation.id 
+                  ? 'bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 border border-cyan-200 dark:border-cyan-800 shadow-md' 
+                  : 'bg-gray-50 dark:bg-gray-700/50 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-magenta-500/10'
               }`}
               onClick={() => setCurrentConversation(conversation)}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-white truncate">
+                  <h3 className="font-semibold text-gray-900 dark:text-white truncate">
                     {conversation.title}
                   </h3>
-                  <p className="text-sm text-secondary-300 truncate mt-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 truncate mt-1">
                     {conversation.lastMessage || 'No messages yet'}
                   </p>
-                  <p className="text-xs text-secondary-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {formatTimestamp(conversation.timestamp)}
                   </p>
                 </div>
@@ -289,7 +291,7 @@ const AICoachPage = () => {
                     e.stopPropagation()
                     deleteConversation(conversation.id)
                   }}
-                  className="ml-2 p-1 text-secondary-400 hover:text-red-400 hover:bg-red-900/20 rounded transition-colors"
+                  className="ml-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-md transition-all duration-300"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -299,8 +301,8 @@ const AICoachPage = () => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-secondary-700">
-          <button className="w-full flex items-center justify-center text-secondary-300 hover:text-white p-2 rounded-lg hover:bg-secondary-700 transition-colors">
+        <div className="p-3 border-t border-gray-200 dark:border-gray-700">
+          <button className="w-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white p-2.5 rounded-lg hover:bg-gradient-to-r hover:from-cyan-500 hover:to-magenta-500 transition-all duration-300 hover:shadow-lg">
             <Settings size={16} className="mr-2" />
             Settings
           </button>
@@ -312,28 +314,28 @@ const AICoachPage = () => {
         {currentConversation ? (
           <>
             {/* Chat Header */}
-            <div className="bg-white dark:bg-secondary-800 border-b border-gray-200 dark:border-secondary-700 p-4 flex-shrink-0">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex-shrink-0 shadow-sm">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                 {currentConversation.title}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-secondary-400">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
                 {currentConversation.messages.length} messages
               </p>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto scroll-smooth min-h-0">
+            <div className="flex-1 overflow-y-auto scroll-smooth min-h-0 bg-gray-50 dark:bg-gray-900">
               {currentConversation.messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`py-4 ${message.type === 'user' ? 'bg-secondary-50 dark:bg-secondary-800' : 'bg-white dark:bg-secondary-900'}`}
+                  className={`py-4 ${message.type === 'user' ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'}`}
                 >
-                  <div className="max-w-3xl mx-auto px-4">
+                  <div className="max-w-4xl mx-auto px-4">
                     <div className="flex items-start space-x-3">
-                      <div className={`w-8 h-8 rounded-sm flex items-center justify-center flex-shrink-0 ${
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md ${
                         message.type === 'user' 
-                          ? 'bg-accent-500 text-white' 
-                          : 'bg-primary-600 text-white'
+                          ? 'bg-gradient-to-r from-cyan-500 to-magenta-500 text-white' 
+                          : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                       }`}>
                         {message.type === 'user' ? (
                           <User size={16} />
@@ -342,9 +344,15 @@ const AICoachPage = () => {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-gray-900 dark:text-white leading-relaxed whitespace-pre-wrap">
-                          {message.content}
-                        </p>
+                        <div className={`p-3 rounded-lg shadow-sm ${
+                          message.type === 'user' 
+                            ? 'bg-gradient-to-r from-cyan-500/10 to-magenta-500/10 border border-cyan-200 dark:border-cyan-800' 
+                            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
+                        }`}>
+                          <p className="text-gray-900 dark:text-white leading-relaxed whitespace-pre-wrap">
+                            {message.content}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -352,16 +360,20 @@ const AICoachPage = () => {
               ))}
               
               {isTyping && (
-                <div className="py-4 bg-white dark:bg-secondary-900">
-                  <div className="max-w-3xl mx-auto px-4">
+                <div className="py-4 bg-gray-50 dark:bg-gray-900">
+                  <div className="max-w-4xl mx-auto px-4">
                     <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-primary-600 text-white rounded-sm flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
                         <Bot size={16} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2">
-                          <Loader size={16} className="animate-spin text-primary-400" />
-                          <span className="text-sm text-secondary-500 dark:text-secondary-400">AI is thinking...</span>
+                        <div className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-5 h-5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                              <Loader size={10} className="animate-spin text-white" />
+                            </div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">AI is thinking...</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -373,8 +385,8 @@ const AICoachPage = () => {
             </div>
 
             {/* Input */}
-            <div className="bg-white dark:bg-secondary-800 border-t border-gray-200 dark:border-secondary-700 flex-shrink-0">
-              <div className="max-w-3xl mx-auto p-4">
+            <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 shadow-lg">
+              <div className="max-w-4xl mx-auto p-4">
                 <div className="relative">
                   <textarea
                     ref={inputRef}
@@ -382,20 +394,20 @@ const AICoachPage = () => {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Message AI Career Coach..."
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-secondary-600 bg-white dark:bg-secondary-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-secondary-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-none shadow-sm"
                     rows="1"
                     disabled={isTyping}
-                    style={{ minHeight: '44px', maxHeight: '200px' }}
+                    style={{ minHeight: '48px', maxHeight: '200px' }}
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!inputValue.trim() || isTyping}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-primary-600 hover:bg-primary-700 disabled:bg-secondary-300 dark:disabled:bg-secondary-600 text-white rounded-md transition-colors disabled:cursor-not-allowed flex items-center justify-center"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-gradient-to-r from-cyan-500 to-magenta-500 hover:from-cyan-600 hover:to-magenta-600 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-700 text-white rounded-md transition-all duration-300 disabled:cursor-not-allowed flex items-center justify-center shadow-md hover:shadow-lg"
                   >
                     <Send size={16} />
                   </button>
                 </div>
-                <p className="text-xs text-secondary-500 dark:text-secondary-400 mt-2 text-center">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
                   AI Career Coach can make mistakes. Consider checking important information.
                 </p>
               </div>
@@ -403,20 +415,20 @@ const AICoachPage = () => {
           </>
         ) : (
           /* Welcome Screen */
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center max-w-md">
-              <div className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <div className="text-center max-w-md p-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl">
                 <Bot size={32} className="text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-magenta-600 bg-clip-text text-transparent mb-4">
                 Welcome to AI Career Coach
               </h2>
-              <p className="text-secondary-600 dark:text-secondary-400 mb-8">
+              <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                 I'm here to help you with resume writing, interview preparation, achievement tracking, and career advice.
               </p>
               <button
                 onClick={createNewConversation}
-                className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors flex items-center mx-auto"
+                className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-magenta-500 hover:from-cyan-600 hover:to-magenta-600 text-white rounded-lg transition-all duration-300 flex items-center mx-auto shadow-lg hover:shadow-xl hover:scale-105"
               >
                 <Plus size={18} className="mr-2" />
                 Start New Conversation

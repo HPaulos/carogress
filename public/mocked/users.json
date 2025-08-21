@@ -7,9 +7,9 @@
       "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
       "title": "Senior Software Engineer",
       "level": 5,
-      "totalPoints": 1250,
+      "totalPoints": 450,
       "streak": 7,
-      "achievements": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      "achievements": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
       "skills": ["JavaScript", "React", "Node.js", "Python", "AWS", "Docker", "Kubernetes"],
       "goals": ["Become Tech Lead", "Learn Machine Learning", "Contribute to Open Source"],
       "socialLinks": [

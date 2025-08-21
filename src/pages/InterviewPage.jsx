@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Plus, Play, CheckCircle, Clock, Target, MessageCircle, Trophy, ArrowRight, Home, FileText, BookOpen, Sparkles, MessageSquare, User } from 'lucide-react'
+import { 
+  Brain, Plus, Play, CheckCircle, Clock, Target, MessageCircle, Trophy, 
+  ArrowRight, Home, FileText, BookOpen, Sparkles, MessageSquare, User,
+  BarChart3, Activity, Award, Zap, Crown, Heart, Briefcase, Lightbulb,
+  ChevronLeft, ChevronRight, Search, X, Mic, MicOff, Volume2, VolumeX
+} from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
@@ -17,13 +22,17 @@ const InterviewPage = () => {
   const [userAnswer, setUserAnswer] = useState('')
   const [practiceQuestions, setPracticeQuestions] = useState([])
   const [expandedQuestion, setExpandedQuestion] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
 
   const categories = [
-    { id: 'all', name: 'All Questions', count: 0 },
-    { id: 'behavioral', name: 'Behavioral', count: 0 },
-    { id: 'technical', name: 'Technical', count: 0 },
-    { id: 'leadership', name: 'Leadership', count: 0 },
-    { id: 'problem-solving', name: 'Problem Solving', count: 0 }
+    { id: 'all', name: 'All Questions', icon: Brain, color: 'blue' },
+    { id: 'behavioral', name: 'Behavioral', icon: MessageCircle, color: 'green' },
+    { id: 'technical', name: 'Technical', icon: Target, color: 'purple' },
+    { id: 'leadership', name: 'Leadership', icon: Crown, color: 'yellow' },
+    { id: 'problem-solving', name: 'Problem Solving', icon: Lightbulb, color: 'orange' }
   ]
 
   useEffect(() => {
@@ -44,7 +53,9 @@ const InterviewPage = () => {
           basedOnAchievement: 'Led team of 5 developers to deliver project ahead of schedule',
           suggestedAnswer: 'Focus on your leadership style, communication strategies, and how you motivated the team. Mention specific challenges and solutions.',
           keyPoints: ['Leadership approach', 'Team motivation', 'Problem-solving', 'Results achieved'],
-          createdAt: '2024-02-15T10:30:00Z'
+          createdAt: '2024-02-15T10:30:00Z',
+          practiceCount: 3,
+          successRate: 85
         },
         {
           id: '2',
@@ -54,7 +65,9 @@ const InterviewPage = () => {
           basedOnAchievement: 'Improved system capacity by 300% through architecture overhaul',
           suggestedAnswer: 'Walk through your technical problem-solving process, including analysis, solution design, and implementation.',
           keyPoints: ['Problem analysis', 'Technical solution', 'Implementation strategy', 'Impact measurement'],
-          createdAt: '2024-02-12T14:20:00Z'
+          createdAt: '2024-02-12T14:20:00Z',
+          practiceCount: 5,
+          successRate: 72
         },
         {
           id: '3',
@@ -64,7 +77,9 @@ const InterviewPage = () => {
           basedOnAchievement: 'Reduced customer response time by 80% with AI chatbot implementation',
           suggestedAnswer: 'Explain your process improvement methodology and quantify the results achieved.',
           keyPoints: ['Process analysis', 'Solution development', 'Implementation', 'Measurable results'],
-          createdAt: '2024-02-10T09:15:00Z'
+          createdAt: '2024-02-10T09:15:00Z',
+          practiceCount: 2,
+          successRate: 90
         },
         {
           id: '4',
@@ -74,7 +89,9 @@ const InterviewPage = () => {
           basedOnAchievement: 'Successfully coordinated with multiple teams during system migration',
           suggestedAnswer: 'Focus on communication skills, empathy, and conflict resolution strategies.',
           keyPoints: ['Communication approach', 'Empathy and understanding', 'Conflict resolution', 'Relationship building'],
-          createdAt: '2024-02-08T16:45:00Z'
+          createdAt: '2024-02-08T16:45:00Z',
+          practiceCount: 4,
+          successRate: 78
         },
         {
           id: '5',
@@ -84,15 +101,29 @@ const InterviewPage = () => {
           basedOnAchievement: 'Made critical architecture decisions during system overhaul',
           suggestedAnswer: 'Explain your decision-making framework and how you manage uncertainty.',
           keyPoints: ['Decision framework', 'Risk assessment', 'Information gathering', 'Outcome evaluation'],
-          createdAt: '2024-02-05T11:30:00Z'
+          createdAt: '2024-02-05T11:30:00Z',
+          practiceCount: 1,
+          successRate: 65
+        },
+        {
+          id: '6',
+          question: 'How do you stay updated with the latest technologies and industry trends?',
+          category: 'technical',
+          difficulty: 'easy',
+          basedOnAchievement: 'Completed advanced course in React and TypeScript',
+          suggestedAnswer: 'Discuss your learning strategies, resources you use, and how you apply new knowledge.',
+          keyPoints: ['Learning methods', 'Resources used', 'Practical application', 'Continuous improvement'],
+          createdAt: '2024-02-03T13:20:00Z',
+          practiceCount: 6,
+          successRate: 95
         }
       ]
       
       setQuestions(mockQuestions)
+      setLoading(false)
     } catch (error) {
       console.error('Error loading questions:', error)
       toast.error('Failed to load interview questions')
-    } finally {
       setLoading(false)
     }
   }
@@ -101,488 +132,643 @@ const InterviewPage = () => {
     setExpandedQuestion(expandedQuestion === questionId ? null : questionId)
   }
 
-  const handleGenerateQuestions = () => {
-    toast.success('Generating new interview questions from your achievements...')
-    // Simulate AI question generation
-    setTimeout(() => {
-      toast.success('New interview questions generated!')
-      loadQuestions() // Reload questions
-    }, 2000)
-  }
-
-  const startPracticeSession = () => {
-    const filteredQuestions = selectedCategory === 'all' 
-      ? questions 
-      : questions.filter(q => q.category === selectedCategory)
-    
-    if (filteredQuestions.length === 0) {
-      toast.error('No questions available for practice')
-      return
-    }
-
-    setPracticeQuestions(filteredQuestions)
-    setCurrentQuestion(0)
-    setUserAnswer('')
-    setPracticeMode(true)
-    toast.success('Practice session started!')
-  }
-
-  const nextQuestion = () => {
-    if (currentQuestion < practiceQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
+  const startPractice = (questionId) => {
+    const question = questions.find(q => q.id === questionId)
+    if (question) {
+      setPracticeQuestions([question])
+      setCurrentQuestion(0)
+      setPracticeMode(true)
       setUserAnswer('')
-    } else {
-      // End practice session
-      setPracticeMode(false)
-      toast.success('Practice session completed!')
     }
   }
 
-  const filteredQuestions = selectedCategory === 'all' 
-    ? questions 
-    : questions.filter(q => q.category === selectedCategory)
+  const handlePracticeSubmit = () => {
+    if (userAnswer.trim()) {
+      toast.success('Answer submitted! Check your performance.')
+      setUserAnswer('')
+      setPracticeMode(false)
+    } else {
+      toast.error('Please provide an answer before submitting.')
+    }
+  }
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case 'easy': return 'text-green-600 bg-green-100'
-      case 'medium': return 'text-yellow-600 bg-yellow-100'
-      case 'hard': return 'text-red-600 bg-red-100'
-      default: return 'text-gray-600 bg-gray-100'
+      case 'easy': return 'green'
+      case 'medium': return 'yellow'
+      case 'hard': return 'red'
+      default: return 'gray'
     }
+  }
+
+  const getDifficultyIcon = (difficulty) => {
+    switch (difficulty) {
+      case 'easy': return '🟢'
+      case 'medium': return '🟡'
+      case 'hard': return '🔴'
+      default: return '⚪'
+    }
+  }
+
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60))
+    
+    if (diffInHours < 1) return 'Just now'
+    if (diffInHours < 24) return `${diffInHours}h ago`
+    const diffInDays = Math.floor(diffInHours / 24)
+    if (diffInDays < 7) return `${diffInDays}d ago`
+    return date.toLocaleDateString()
+  }
+
+  const getCategoryIcon = (category) => {
+    const cat = categories.find(c => c.id === category)
+    return cat ? cat.icon : Brain
+  }
+
+  const getCategoryColor = (category) => {
+    const cat = categories.find(c => c.id === category)
+    return cat ? cat.color : 'blue'
+  }
+
+  // Filter questions based on search and category
+  const filteredQuestions = questions.filter(question => {
+    const matchesSearch = question.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         question.suggestedAnswer.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === 'all' || question.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
+
+  // Pagination logic
+  const questionsPerPage = 5
+  const totalQuestions = filteredQuestions.length
+  const totalPages = Math.ceil(totalQuestions / questionsPerPage)
+  const startIndex = (currentPage - 1) * questionsPerPage
+  const endIndex = startIndex + questionsPerPage
+  const currentQuestions = filteredQuestions.slice(startIndex, endIndex)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
   }
 
   if (loading) {
     return (
       <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center`}>
-        <div className="spinner"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return (
-      <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center`}>
         <div className="text-center">
-          <h2 className={`text-2xl font-bold ${classes.text.primary} mb-4`}>Please sign in to access interview prep</h2>
-          <p className={classes.text.secondary}>You need to be logged in to practice with AI-generated interview questions.</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (practiceMode) {
-    const question = practiceQuestions[currentQuestion]
-    return (
-      <div className={`min-h-screen ${classes.bg.primary}`}>
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6`}>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className={`text-lg font-semibold ${classes.text.primary}`}>Practice Session</h2>
-                <p className={`text-sm ${classes.text.secondary}`}>
-                  Question {currentQuestion + 1} of {practiceQuestions.length}
-                </p>
-              </div>
-              <button
-                onClick={() => setPracticeMode(false)}
-                className={`text-sm ${classes.text.secondary} hover:${classes.text.primary} transition-colors`}
-              >
-                Exit Practice
-              </button>
-            </div>
-
-            <div className="mb-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <span className={`badge ${getDifficultyColor(question.difficulty)}`}>
-                  {question.difficulty}
-                </span>
-                <span className="badge badge-primary">{question.category}</span>
-              </div>
-              
-              <h3 className={`text-xl font-semibold ${classes.text.primary} mb-4`}>
-                {question.question}
-              </h3>
-
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-6">
-                <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
-                  <strong>Based on:</strong> {question.basedOnAchievement}
-                </p>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  <strong>Tip:</strong> {question.suggestedAnswer}
-                </p>
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <label className={`block text-sm font-medium ${classes.text.secondary} mb-2`}>
-                Your Answer
-              </label>
-              <textarea
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                className={`w-full h-40 px-3 py-2 border ${classes.border.primary} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${classes.bg.input} ${classes.text.primary}`}
-                placeholder="Type your answer here... Use the STAR method (Situation, Task, Action, Result) for behavioral questions."
-              />
-            </div>
-
-            <div className={`${classes.bg.tertiary} p-4 rounded-lg mb-6`}>
-              <h4 className={`font-medium ${classes.text.primary} mb-2`}>Key Points to Cover:</h4>
-              <ul className="space-y-1">
-                {question.keyPoints.map((point, index) => (
-                  <li key={index} className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className={`text-sm ${classes.text.secondary}`}>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex justify-between">
-              <button
-                onClick={() => setPracticeMode(false)}
-                className={`px-4 py-2 ${classes.text.secondary} ${classes.bg.tertiary} rounded-lg hover:${classes.bg.secondary} transition-colors`}
-              >
-                Exit Practice
-              </button>
-              <button
-                onClick={nextQuestion}
-                className="btn-primary flex items-center gap-2"
-              >
-                {currentQuestion < practiceQuestions.length - 1 ? (
-                  <>
-                    Next Question
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                ) : (
-                  'Complete Session'
-                )}
-              </button>
-            </div>
-          </div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+          <p className={`${classes.text.secondary}`}>Loading interview questions...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={`min-h-screen ${classes.bg.primary}`}>
-      {/* Professional Header */}
-      <div className={`${classes.bg.card} ${classes.border.primary} border-b shadow-sm sticky top-0 z-10`}>
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+    <div className={`min-h-screen ${classes.bg.primary} flex flex-col lg:flex-row`}>
+      {/* Left Sidebar - Sticky */}
+      <div className="w-full lg:w-80 flex-shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col">
+        {/* Sticky Header */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="w-12 h-12 bg-gradient-to-r from-cyan-500 via-magenta-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg"
+            >
+              <span className="text-white text-base font-bold">{user.name.charAt(0)}</span>
+            </motion.div>
             <div>
-              <h1 className={`text-lg font-semibold ${classes.text.primary}`}>Interview Preparation</h1>
-              <p className={`text-sm ${classes.text.secondary}`}>
-                Practice with AI-generated questions based on your achievements
+              <h1 className={`text-xl font-black ${classes.text.primary} mb-0.5`}>
+                Interview Prep
+              </h1>
+              <p className={`text-xs ${classes.text.secondary} flex items-center gap-2`}>
+                <Sparkles className="w-3 h-3 text-cyan-500" />
+                AI-powered questions, <span className="bg-gradient-to-r from-cyan-500 to-magenta-500 bg-clip-text text-transparent font-semibold">based on your achievements</span>
               </p>
             </div>
-            <button 
-              onClick={handleGenerateQuestions}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Generate Questions
-            </button>
           </div>
+        </div>
+        
+        {/* Scrollable Content */}
+        <div className="p-6 flex-1 overflow-y-auto space-y-6">
+          {/* Quick Actions */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-lg flex items-center justify-center">
+                <Zap className="w-3 h-3 text-white" />
+              </div>
+              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Quick Actions</h3>
+            </div>
+            <div className="space-y-2">
+              {[
+                { title: 'Start Practice Session', icon: Play, action: () => setPracticeMode(true), color: 'green' },
+                { title: 'View Dashboard', icon: BarChart3, action: () => window.location.href = '/dashboard', color: 'blue' },
+                { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume', color: 'purple' },
+                { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories', color: 'yellow' }
+              ].map((item, index) => (
+                <motion.button
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  onClick={item.action}
+                  className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:shadow-md ${classes.text.secondary} hover:${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`}
+                >
+                  <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
+                    <item.icon className={`w-4 h-4 text-cyan-500`} />
+                  </div>
+                  <span className="text-xs font-semibold">{item.title}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Categories */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <Brain className="w-3 h-3 text-white" />
+              </div>
+              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Categories</h3>
+            </div>
+            <div className="space-y-2">
+              {categories.map((category, index) => (
+                <motion.button
+                  key={category.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1, duration: 0.6 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  onClick={() => {
+                    setSelectedCategory(category.id)
+                    setCurrentPage(1)
+                  }}
+                  className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:shadow-md ${
+                    selectedCategory === category.id 
+                      ? `${classes.bg.secondary} ${classes.text.primary} shadow-md`
+                      : `${classes.text.secondary} hover:${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`
+                  }`}
+                >
+                  <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
+                    <category.icon className={`w-4 h-4 text-cyan-500`} />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-xs font-semibold">{category.name}</span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {questions.filter(q => category.id === 'all' || q.category === category.id).length} questions
+                    </p>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.6 }}
+            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                <Trophy className="w-3 h-3 text-white" />
+              </div>
+              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Your Stats</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-center p-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-400/20">
+                  <p className={`text-xs ${classes.text.secondary} mb-0.5`}>Total Questions</p>
+                  <p className={`text-sm font-bold ${classes.text.primary}`}>{questions.length}</p>
+                </div>
+                <div className="text-center p-2 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-lg border border-orange-400/20">
+                  <p className={`text-xs ${classes.text.secondary} mb-0.5`}>Practice Sessions</p>
+                  <p className={`text-sm font-bold ${classes.text.primary}`}>{questions.reduce((sum, q) => sum + q.practiceCount, 0)}</p>
+                </div>
+              </div>
+              <div className="text-center p-2 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-lg border border-green-400/20">
+                <p className={`text-xs ${classes.text.secondary} mb-0.5`}>Average Success Rate</p>
+                <p className={`text-sm font-bold ${classes.text.primary}`}>
+                  {Math.round(questions.reduce((sum, q) => sum + q.successRate, 0) / questions.length)}%
+                </p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Three Column Layout */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-12 gap-6">
-          {/* Left Sidebar - Quick Access */}
-          <div className="col-span-3">
-            <div className="sticky top-24">
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Quick Access</h3>
-                <div className="space-y-2">
-                  {[
-                    { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
-                    { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
-                    { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
-                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
-                    { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
-                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
-                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
-                  ].map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={item.action}
-                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                        item.title === 'Interview Prep'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
-                          : `${classes.text.secondary} hover:${classes.text.primary}`
-                      }`}
-                    >
-                      <item.icon className="w-4 h-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">{item.title}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Interview Stats */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-3`}>Interview Stats</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Total Questions</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{questions.length}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Categories</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{categories.length - 1}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Practice Sessions</span>
-                    <span className={`font-medium ${classes.text.primary}`}>0</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Middle Column - Main Content */}
-          <div className="col-span-6">
-
-        {/* Professional Practice Session Card */}
-        <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mb-6`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                <Play className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <h3 className={`text-sm font-medium ${classes.text.primary}`}>Practice Session</h3>
-                <p className={`text-xs ${classes.text.secondary}`}>Practice answering questions in a timed environment</p>
-              </div>
-            </div>
-            <button 
-              onClick={startPracticeSession}
-              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors flex items-center gap-1"
-            >
-              <Play className="w-3 h-3" />
-              Start
-            </button>
-          </div>
-        </div>
-
-
-
-        {/* Professional Questions List */}
-        {filteredQuestions.length > 0 ? (
-          <div className="space-y-3">
-            {filteredQuestions.map((question, index) => (
-              <div
-                key={question.id}
-                className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 hover:shadow-sm transition-shadow`}
+      {/* Main Content Area with Right Sidebar */}
+      <div className="flex-1 flex flex-col lg:flex-row">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6">
+            <div className="space-y-6">
+              {/* Header */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="flex items-center justify-between"
               >
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Brain className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1 min-w-0">
-                        <h3 className={`text-sm font-medium ${classes.text.primary} mb-1`}>
-                          {question.question}
-                        </h3>
-                        <div className="flex items-center gap-3">
-                          <span className={`px-2 py-0.5 rounded text-xs font-medium ${getDifficultyColor(question.difficulty)}`}>
-                            {question.difficulty}
-                          </span>
-                          <span className={`px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400`}>
-                            {question.category}
-                          </span>
-                          <span className={`text-xs ${classes.text.secondary}`}>
-                            {new Date(question.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className={`${classes.bg.tertiary} p-3 rounded mb-3`}>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Trophy className="w-3 h-3 text-yellow-500" />
-                        <span className={`text-xs font-medium ${classes.text.secondary}`}>Based on:</span>
-                      </div>
-                      <p className={`text-xs ${classes.text.secondary}`}>{question.basedOnAchievement}</p>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className={`flex items-center gap-2 text-xs ${classes.text.secondary}`}>
-                        <span>{question.keyPoints.length} key points</span>
-                      </div>
-                      <button 
-                        onClick={() => handleViewDetails(question.id)}
-                        className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center gap-1"
-                      >
-                        {expandedQuestion === question.id ? 'Hide Details' : 'View Details'} 
-                        <svg 
-                          className={`w-3 h-3 transition-transform ${expandedQuestion === question.id ? 'rotate-180' : ''}`} 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
+                <div>
+                  <h2 className={`text-2xl font-bold ${classes.text.primary} mb-2`}>
+                    {selectedCategory === 'all' ? 'All Questions' : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Questions`}
+                  </h2>
+                  <p className={`text-sm ${classes.text.secondary}`}>
+                    {totalQuestions} question{totalQuestions !== 1 ? 's' : ''} • Based on your achievements
+                  </p>
                 </div>
-                
-                {/* Expandable Details Section */}
-                {expandedQuestion === question.id && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setPracticeMode(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Play className="w-4 h-4" />
+                  Start Practice
+                </motion.button>
+              </motion.div>
+
+              {/* Search */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.6 }}
+                className="relative"
+              >
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value)
+                    setCurrentPage(1)
+                  }}
+                  placeholder="Search questions..."
+                  className={`w-full px-4 py-3 pl-12 border-2 ${classes.border.primary} rounded-xl ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300`}
+                />
+                <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </motion.div>
+
+              {/* Questions Grid */}
+              <div className="space-y-6">
+                {currentQuestions.map((question, index) => (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4"
+                    key={question.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
+                    className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300`}
                   >
-                    <div className="space-y-4">
-                      {/* Category and Difficulty */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Category</h4>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                            question.category === 'behavioral' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' :
-                            question.category === 'technical' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
-                            question.category === 'leadership' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' :
-                            'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
-                          }`}>
-                            {question.category}
-                          </span>
-                        </div>
-                        <div>
-                          <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Difficulty</h4>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                            question.difficulty === 'easy' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
-                            question.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                            'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-                          }`}>
-                            {question.difficulty}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Based on Achievement */}
-                      <div>
-                        <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Based on Achievement</h4>
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                          <p className={`text-xs ${classes.text.secondary}`}>{question.basedOnAchievement}</p>
-                        </div>
-                      </div>
-
-                      {/* Suggested Answer */}
-                      <div>
-                        <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Suggested Answer Approach</h4>
-                        <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                          <p className={`text-xs ${classes.text.secondary} leading-relaxed`}>{question.suggestedAnswer}</p>
-                        </div>
-                      </div>
-
-                      {/* Key Points */}
-                      <div>
-                        <h4 className={`text-xs font-medium ${classes.text.primary} mb-2`}>Key Points to Cover</h4>
-                        <div className="space-y-2">
-                          {question.keyPoints.map((point, index) => (
-                            <div key={index} className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                              <p className={`text-xs ${classes.text.secondary}`}>{point}</p>
+                    <div className="flex items-start gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className={`w-10 h-10 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
+                            {(() => {
+                              const IconComponent = getCategoryIcon(question.category)
+                              return <IconComponent className="w-5 h-5 text-cyan-500" />
+                            })()}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className={`text-lg font-bold ${classes.text.primary} mb-1`}>
+                              {question.question}
+                            </h3>
+                            <div className="flex items-center gap-4 text-xs">
+                              <span className={`${classes.text.secondary} flex items-center gap-1`}>
+                                <Clock className="w-3 h-3" />
+                                {formatTimeAgo(question.createdAt)}
+                              </span>
+                              <span className={`${classes.text.secondary} capitalize`}>
+                                {question.category}
+                              </span>
+                              <span className={`${classes.text.secondary} flex items-center gap-1`}>
+                                {getDifficultyIcon(question.difficulty)} {question.difficulty}
+                              </span>
                             </div>
-                          ))}
+                          </div>
                         </div>
-                      </div>
+                        
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="flex items-center gap-2">
+                            <Play className="w-4 h-4 text-green-500" />
+                            <span className="text-xs text-green-600 dark:text-green-400">
+                              {question.practiceCount} practices
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Trophy className="w-4 h-4 text-yellow-500" />
+                            <span className="text-xs text-yellow-600 dark:text-yellow-400">
+                              {question.successRate}% success
+                            </span>
+                          </div>
+                        </div>
 
-                      {/* Action Button */}
-                      <div className="pt-2">
-                        <button
-                          onClick={() => {
-                            setPracticeQuestions([question])
-                            setPracticeMode(true)
-                          }}
-                          className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                        >
-                          <Play className="w-3 h-3" />
-                          Practice This Question
-                        </button>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => startPractice(question.id)}
+                              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300"
+                            >
+                              <Play className="w-4 h-4" />
+                              Practice
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => handleViewDetails(question.id)}
+                              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                              View Details
+                            </motion.button>
+                          </div>
+                        </div>
+
+                        {/* Expanded Details */}
+                        {expandedQuestion === question.id && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700"
+                          >
+                            <div className="space-y-4">
+                              <div>
+                                <h4 className={`text-sm font-bold ${classes.text.primary} mb-2`}>Based on Achievement:</h4>
+                                <p className={`text-sm ${classes.text.secondary} bg-gradient-to-r from-cyan-500/10 to-magenta-500/10 p-3 rounded-lg`}>
+                                  {question.basedOnAchievement}
+                                </p>
+                              </div>
+                              <div>
+                                <h4 className={`text-sm font-bold ${classes.text.primary} mb-2`}>Key Points to Cover:</h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {question.keyPoints.map((point, idx) => (
+                                    <span key={idx} className="px-2 py-1 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 text-yellow-700 dark:text-yellow-400 text-xs rounded-lg border border-yellow-400/20">
+                                      {point}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              <div>
+                                <h4 className={`text-sm font-bold ${classes.text.primary} mb-2`}>Suggested Approach:</h4>
+                                <p className={`text-sm ${classes.text.secondary}`}>
+                                  {question.suggestedAnswer}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
                       </div>
                     </div>
                   </motion.div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <MessageCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <h3 className={`text-sm font-medium ${classes.text.primary} mb-1`}>No Questions Yet</h3>
-            <p className={`${classes.text.secondary} text-sm mb-4 max-w-md mx-auto`}>
-              Generate your first set of interview questions based on your logged achievements.
-            </p>
-            <button 
-              onClick={handleGenerateQuestions}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 mx-auto"
-            >
-              <Brain className="w-4 h-4" />
-              Generate Questions
-            </button>
-          </div>
-        )}
-          </div>
 
-          {/* Right Sidebar - Question Categories */}
-          <div className="col-span-3">
-            <div className="sticky top-24">
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Question Categories</h3>
-                <div className="space-y-2">
-                  {categories.map((category) => {
-                    const count = category.id === 'all' 
-                      ? questions.length 
-                      : questions.filter(q => q.category === category.id).length;
-                    return (
-                      <button
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full flex items-center justify-between p-2 rounded-lg text-xs transition-colors ${
-                          selectedCategory === category.id
-                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                            : `${classes.text.secondary} hover:${classes.bg.secondary}`
-                        }`}
-                      >
-                        <span>{category.name}</span>
-                        <span className={`font-medium px-2 py-0.5 rounded-full ${
-                          selectedCategory === category.id 
-                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                        }`}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              
-              {/* Difficulty Distribution */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Difficulty Level</h3>
-                <div className="space-y-3">
-                  {['easy', 'medium', 'hard'].map((difficulty) => {
-                    const count = questions.filter(q => q.difficulty === difficulty).length;
-                    return (
-                      <div key={difficulty} className="flex items-center justify-between">
-                        <span className={`text-xs capitalize ${classes.text.secondary}`}>{difficulty}</span>
-                        <span className={`text-xs font-medium ${classes.text.primary} bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full`}>
-                          {count}
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.5, duration: 0.6 }}
+                  className="mt-8"
+                >
+                  <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 shadow-lg`}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-lg flex items-center justify-center">
+                          <BarChart3 className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <h3 className={`text-sm font-bold ${classes.text.primary}`}>Question Pages</h3>
+                          <p className={`text-xs ${classes.text.secondary}`}>
+                            Showing {startIndex + 1}-{Math.min(endIndex, totalQuestions)} of {totalQuestions} questions
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs ${classes.text.secondary} font-medium`}>Page</span>
+                        <span className={`text-sm font-bold ${classes.text.primary} bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 px-3 py-1 rounded-lg`}>
+                          {currentPage} of {totalPages}
                         </span>
                       </div>
-                    );
-                  })}
+                    </div>
+                    
+                    <div className="flex items-center justify-center gap-3">
+                      <motion.button
+                        whileHover={{ scale: 1.05, x: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                          currentPage === 1
+                            ? `${classes.bg.tertiary} ${classes.text.muted} cursor-not-allowed`
+                            : `${classes.bg.card} ${classes.border.primary} border hover:shadow-md ${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`
+                        }`}
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        Previous
+                      </motion.button>
+                      
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <motion.button
+                            key={page}
+                            whileHover={{ scale: 1.1, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handlePageChange(page)}
+                            className={`w-10 h-10 rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center ${
+                              currentPage === page
+                                ? 'bg-gradient-to-r from-cyan-500 to-magenta-500 text-white shadow-lg'
+                                : `${classes.bg.card} ${classes.border.primary} border hover:shadow-md ${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-magenta-500/10`
+                            }`}
+                          >
+                            {page}
+                          </motion.button>
+                        ))}
+                      </div>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05, x: 2 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                          currentPage === totalPages
+                            ? `${classes.bg.tertiary} ${classes.text.muted} cursor-not-allowed`
+                            : `${classes.bg.card} ${classes.border.primary} border hover:shadow-md ${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`
+                        }`}
+                      >
+                        Next
+                        <ChevronRight className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar - Sticky */}
+        <div className="w-full lg:w-80 flex-shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col">
+          {/* Sticky Header */}
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <Activity className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h2 className={`text-lg font-bold ${classes.text.primary}`}>Practice Session</h2>
+                <p className={`text-xs ${classes.text.secondary}`}>Your current practice status</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Scrollable Content */}
+          <div className="p-4 flex-1 overflow-y-auto space-y-4">
+            {/* Practice Session */}
+            {practiceMode && practiceQuestions.length > 0 ? (
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-bold ${classes.text.primary} mb-3`}>Current Question</h3>
+                <div className="space-y-4">
+                  <p className={`text-sm ${classes.text.secondary}`}>
+                    {practiceQuestions[currentQuestion].question}
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <textarea
+                      value={userAnswer}
+                      onChange={(e) => setUserAnswer(e.target.value)}
+                      placeholder="Type your answer here..."
+                      rows={4}
+                      className={`w-full px-3 py-2 border-2 ${classes.border.primary} rounded-lg ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300 resize-none`}
+                    />
+                    
+                    <div className="flex items-center gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsRecording(!isRecording)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          isRecording 
+                            ? 'bg-red-500 text-white' 
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                        }`}
+                      >
+                        {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                      </motion.button>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsMuted(!isMuted)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          isMuted 
+                            ? 'bg-red-500 text-white' 
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                        }`}
+                      >
+                        {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                      </motion.button>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handlePracticeSubmit}
+                        className="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300"
+                      >
+                        Submit Answer
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setPracticeMode(false)}
+                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        Exit
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+                <h3 className={`text-sm font-bold ${classes.text.primary} mb-3`}>Start Practice</h3>
+                <p className={`text-xs ${classes.text.secondary} mb-4`}>
+                  Click "Practice" on any question to begin your interview preparation session.
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setPracticeMode(true)}
+                  className="w-full px-4 py-2 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300"
+                >
+                  Start Random Practice
+                </motion.button>
+              </div>
+            )}
+
+            {/* Recent Questions */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+              <h3 className={`text-sm font-bold ${classes.text.primary} mb-3`}>Recent Questions</h3>
+              <div className="space-y-3">
+                {questions.slice(0, 3).map((question, index) => (
+                  <motion.div
+                    key={question.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
+                    className="flex items-start gap-3"
+                  >
+                    <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center flex-shrink-0`}>
+                      {(() => {
+                        const IconComponent = getCategoryIcon(question.category)
+                        return <IconComponent className="w-3 h-3 text-cyan-500" />
+                      })()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-xs font-medium ${classes.text.primary} line-clamp-2`}>
+                        {question.question}
+                      </p>
+                      <p className={`text-xs ${classes.text.secondary} mt-1`}>
+                        {formatTimeAgo(question.createdAt)}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tips */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+              <h3 className={`text-sm font-bold ${classes.text.primary} mb-3`}>Interview Tips</h3>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className={`text-xs ${classes.text.secondary}`}>Use the STAR method for behavioral questions</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-magenta-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className={`text-xs ${classes.text.secondary}`}>Practice your answers out loud</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className={`text-xs ${classes.text.secondary}`}>Focus on specific examples and results</p>
                 </div>
               </div>
             </div>

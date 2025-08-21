@@ -34,7 +34,61 @@ import {
   BookOpen,
   Sparkles,
   Settings,
-  Camera
+  Camera,
+  ChevronRight,
+  ChevronLeft,
+  Download,
+  Share2,
+  BarChart3,
+  Activity,
+  Zap,
+  Check,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Bell,
+  Heart,
+  Bookmark,
+  ExternalLink,
+  Copy,
+  Lock,
+  Shield,
+  Key,
+  Crown,
+  Trophy,
+  Flag,
+  Compass,
+  Map,
+  Building,
+  School,
+  Code,
+  Database,
+  Server,
+  Cloud,
+  Wifi,
+  Signal,
+  Battery,
+  Power,
+  Volume2,
+  VolumeX,
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  Monitor,
+  Smartphone,
+  Tablet,
+  Laptop,
+  Printer,
+  HardDrive,
+  Cpu,
+  Fan,
+  Thermometer,
+  Timer,
+  Watch,
+  Sun,
+  Moon,
+  Wind
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
@@ -52,10 +106,51 @@ const ProfilePage = () => {
   const [newGoal, setNewGoal] = useState('')
   const [newSocialLink, setNewSocialLink] = useState({ label: '', url: '' })
   const [showSocialForm, setShowSocialForm] = useState(false)
+  const [currentTab, setCurrentTab] = useState('overview')
 
   useEffect(() => {
     loadProfile()
   }, [])
+
+  // Helper functions
+  const formatTimeAgo = (date) => {
+    const now = new Date()
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60))
+    
+    if (diffInHours < 1) return 'Just now'
+    if (diffInHours < 24) return `${diffInHours}h ago`
+    
+    const diffInDays = Math.floor(diffInHours / 24)
+    if (diffInDays < 7) return `${diffInDays}d ago`
+    
+    const diffInWeeks = Math.floor(diffInDays / 7)
+    if (diffInWeeks < 4) return `${diffInWeeks}w ago`
+    
+    const diffInMonths = Math.floor(diffInDays / 30)
+    return `${diffInMonths}m ago`
+  }
+
+  const getActivityIcon = (type) => {
+    switch (type) {
+      case 'achievement': return Award
+      case 'document': return FileText
+      case 'interview': return MessageSquare
+      case 'skill': return Code
+      case 'goal': return Target
+      default: return Star
+    }
+  }
+
+  const getActivityColor = (type) => {
+    switch (type) {
+      case 'achievement': return 'green'
+      case 'document': return 'blue'
+      case 'interview': return 'purple'
+      case 'skill': return 'cyan'
+      case 'goal': return 'orange'
+      default: return 'gray'
+    }
+  }
 
   const loadProfile = async () => {
     if (!user) return
@@ -220,7 +315,7 @@ const ProfilePage = () => {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className={`text-lg font-semibold ${classes.text.primary}`}>Profile</h1>
+              <h1 className={`text-xl font-bold bg-gradient-to-r from-cyan-600 to-magenta-600 bg-clip-text text-transparent`}>Profile</h1>
               <p className={`text-sm ${classes.text.secondary}`}>
                 Manage your professional information and preferences
               </p>
@@ -228,10 +323,10 @@ const ProfilePage = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setEditing(!editing)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${
+                className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 flex items-center gap-2 ${
                   editing 
-                    ? 'bg-green-600 hover:bg-green-700 text-white' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl' 
+                    : 'bg-gradient-to-r from-cyan-500 to-magenta-500 hover:from-cyan-600 hover:to-magenta-600 text-white shadow-lg hover:shadow-xl'
                 }`}
               >
                 {editing ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
@@ -242,14 +337,17 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Three Column Layout */}
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-12 gap-6">
           {/* Left Sidebar - Quick Access */}
           <div className="col-span-3">
             <div className="sticky top-24">
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Quick Access</h3>
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}>
+                <h3 className={`text-sm font-bold ${classes.text.primary} mb-4 flex items-center gap-2`}>
+                  <Zap className="w-4 h-4 text-cyan-500" />
+                  Quick Access
+                </h3>
                 <div className="space-y-2">
                   {[
                     { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
@@ -260,21 +358,26 @@ const ProfilePage = () => {
                     { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
                     { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
                   ].map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={item.action}
-                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${classes.text.secondary} hover:${classes.text.primary}`}
-                    >
-                      <item.icon className="w-4 h-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">{item.title}</span>
-                    </button>
+                                         <button
+                       key={index}
+                       onClick={item.action}
+                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-magenta-500/10 ${classes.text.secondary} hover:${classes.text.primary}`}
+                     >
+                       <div className={`w-6 h-6 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
+                         <item.icon className={`w-3 h-3 text-cyan-500`} />
+                       </div>
+                       <span className="text-sm font-medium">{item.title}</span>
+                     </button>
                   ))}
                 </div>
               </div>
               
               {/* Profile Stats */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-3`}>Profile Stats</h3>
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 mt-4 shadow-lg`}>
+                <h3 className={`text-sm font-bold ${classes.text.primary} mb-3 flex items-center gap-2`}>
+                  <BarChart3 className="w-4 h-4 text-magenta-500" />
+                  Profile Stats
+                </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between text-xs">
                     <span className={classes.text.secondary}>Level</span>
@@ -300,7 +403,7 @@ const ProfilePage = () => {
           {/* Middle Column - Main Profile Content */}
           <div className="col-span-6">
             {/* Compact Profile Header */}
-            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 mb-6 shadow-lg`}>
               <div className="flex items-center gap-4">
                 {/* Avatar */}
                 <div className="relative">
@@ -310,7 +413,7 @@ const ProfilePage = () => {
                     className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-gray-700"
                   />
                   {editing && (
-                    <button className="absolute bottom-0 right-0 p-1 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors">
+                    <button className="absolute bottom-0 right-0 p-1 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-full hover:shadow-lg transition-all duration-300">
                       <Camera className="w-3 h-3 text-white" />
                     </button>
                   )}
@@ -331,7 +434,7 @@ const ProfilePage = () => {
                         profile.name
                       )}
                     </h2>
-                    <span className={`text-sm px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full`}>
+                    <span className={`text-sm px-2 py-1 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 text-cyan-600 dark:text-cyan-400 rounded-full font-medium`}>
                       Level {profile.stats.level}
                     </span>
                   </div>
@@ -379,7 +482,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Contact Info */}
-            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 mb-6 shadow-lg`}>
                 <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Contact Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
@@ -431,9 +534,12 @@ const ProfilePage = () => {
               </div>
 
             {/* Skills Section */}
-            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 mb-6 shadow-lg`}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className={`text-lg font-semibold ${classes.text.primary}`}>Skills</h3>
+                <h3 className={`text-lg font-bold ${classes.text.primary} flex items-center gap-2`}>
+                  <Code className="w-5 h-5 text-cyan-500" />
+                  Skills & Expertise
+                </h3>
                 {editing && (
                   <div className="flex gap-2">
                     <input
@@ -446,7 +552,7 @@ const ProfilePage = () => {
                     />
                     <button
                       onClick={handleAddSkill}
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                      className="px-3 py-1 bg-gradient-to-r from-cyan-500 to-magenta-500 hover:from-cyan-600 hover:to-magenta-600 text-white text-sm rounded-lg font-medium hover:shadow-lg transition-all duration-300"
                     >
                       Add
                     </button>
@@ -457,7 +563,7 @@ const ProfilePage = () => {
                 {profile.skills.map((skill, index) => (
                   <div
                     key={index}
-                    className={`px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 flex items-center gap-2`}
+                    className={`px-3 py-1 rounded-xl text-sm font-medium bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800 flex items-center gap-2 hover:shadow-md transition-all duration-300`}
                   >
                     <span>{skill}</span>
                     {editing && (
@@ -474,9 +580,12 @@ const ProfilePage = () => {
             </div>
 
             {/* Goals Section */}
-            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-6 mb-6`}>
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 mb-6 shadow-lg`}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className={`text-lg font-semibold ${classes.text.primary}`}>Career Goals</h3>
+                <h3 className={`text-lg font-bold ${classes.text.primary} flex items-center gap-2`}>
+                  <Target className="w-5 h-5 text-green-500" />
+                  Career Goals
+                </h3>
                 {editing && (
                   <div className="flex gap-2">
                     <input
@@ -489,7 +598,7 @@ const ProfilePage = () => {
                     />
                     <button
                       onClick={handleAddGoal}
-                      className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
+                      className="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm rounded-lg font-medium hover:shadow-lg transition-all duration-300"
                     >
                       Add
                     </button>
@@ -500,11 +609,13 @@ const ProfilePage = () => {
                 {profile.goals.map((goal, index) => (
                   <div
                     key={index}
-                    className={`flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800`}
+                    className={`flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-200 dark:border-green-800 hover:shadow-md transition-all duration-300`}
                   >
                     <div className="flex items-center gap-3">
-                      <Target className="w-4 h-4 text-green-600" />
-                      <span className={`text-sm ${classes.text.primary}`}>{goal}</span>
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-lg flex items-center justify-center">
+                        <Target className="w-4 h-4 text-green-500" />
+                      </div>
+                      <span className={`text-sm font-medium ${classes.text.primary}`}>{goal}</span>
                     </div>
                     {editing && (
                       <button
@@ -524,13 +635,16 @@ const ProfilePage = () => {
           <div className="col-span-3">
             <div className="sticky top-24">
               {/* Social Links */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mb-4`}>
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 mb-4 shadow-lg`}>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className={`text-sm font-medium ${classes.text.primary}`}>Social Links</h3>
+                  <h3 className={`text-sm font-bold ${classes.text.primary} flex items-center gap-2`}>
+                    <Globe className="w-4 h-4 text-purple-500" />
+                    Social Links
+                  </h3>
                   {editing && !showSocialForm && (
                     <button
                       onClick={() => setShowSocialForm(true)}
-                      className="p-1 text-blue-600 hover:text-blue-700"
+                      className="p-1 text-purple-600 hover:text-purple-700 transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -538,7 +652,7 @@ const ProfilePage = () => {
                 </div>
                 {/* Add Social Link Form */}
                 {showSocialForm && (
-                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg mb-3">
+                  <div className="p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-200 dark:border-purple-800 mb-4">
                     <div className="space-y-2">
                       <input
                         type="text"
@@ -557,7 +671,7 @@ const ProfilePage = () => {
                       <div className="flex gap-2">
                         <button
                           onClick={handleAddSocialLink}
-                          className="flex-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors"
+                          className="flex-1 px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm rounded-lg font-medium hover:shadow-lg transition-all duration-300"
                         >
                           Add
                         </button>
@@ -576,8 +690,8 @@ const ProfilePage = () => {
                   {profile.socialLinks.map((link, index) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                          <Linkedin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg flex items-center justify-center">
+                          <Linkedin className="w-4 h-4 text-purple-500" />
                         </div>
                         <div>
                           <p className={`text-xs font-medium ${classes.text.primary}`}>{link.label}</p>
@@ -598,22 +712,25 @@ const ProfilePage = () => {
               </div>
 
               {/* Recent Activity */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Recent Activity</h3>
+              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}>
+                <h3 className={`text-sm font-bold ${classes.text.primary} mb-4 flex items-center gap-2`}>
+                  <Activity className="w-4 h-4 text-pink-500" />
+                  Recent Activity
+                </h3>
                 <div className="space-y-3">
                   {profile.recentActivity.map((activity) => (
                     <div key={activity.id} className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        activity.type === 'achievement' ? 'bg-green-100 dark:bg-green-900/30' :
-                        activity.type === 'document' ? 'bg-blue-100 dark:bg-blue-900/30' :
-                        'bg-purple-100 dark:bg-purple-900/30'
-                      }`}>
+                      <div className={`w-8 h-8 bg-gradient-to-r ${
+                        activity.type === 'achievement' ? 'from-green-500/20 to-emerald-500/20' :
+                        activity.type === 'document' ? 'from-blue-500/20 to-purple-500/20' :
+                        'from-purple-500/20 to-pink-500/20'
+                      } rounded-lg flex items-center justify-center flex-shrink-0`}>
                         {activity.type === 'achievement' ? (
-                          <Award className="w-3 h-3 text-green-600 dark:text-green-400" />
+                          <Award className="w-4 h-4 text-green-500" />
                         ) : activity.type === 'document' ? (
-                          <FileText className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                          <FileText className="w-4 h-4 text-blue-500" />
                         ) : (
-                          <MessageSquare className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+                          <MessageSquare className="w-4 h-4 text-purple-500" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">

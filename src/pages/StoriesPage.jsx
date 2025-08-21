@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { PenTool, Plus, BookOpen, Eye, Edit, Trash2, Calendar, User, Trophy, Copy, Heart, Share2, MessageCircle, Clock, TrendingUp, Sparkles, ChevronDown, ChevronUp, Home, FileText, MessageSquare } from 'lucide-react'
+import { 
+  PenTool, Plus, BookOpen, Eye, Edit, Trash2, Calendar, User, Trophy, 
+  Copy, Heart, Share2, MessageCircle, Clock, TrendingUp, Sparkles, 
+  ChevronDown, ChevronUp, Home, FileText, MessageSquare, Target, 
+  BarChart3, Activity, Award, Zap, Crown, Heart as HeartIcon, 
+  Briefcase, Lightbulb, ChevronLeft, ChevronRight, Search, X
+} from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
@@ -16,13 +22,15 @@ const StoriesPage = () => {
   const [likedStories, setLikedStories] = useState(new Set())
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [expandedStories, setExpandedStories] = useState(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const categories = [
-    { id: 'all', name: 'All Stories', count: 0 },
-    { id: 'Leadership', name: 'Leadership', count: 0 },
-    { id: 'Technical', name: 'Technical', count: 0 },
-    { id: 'Innovation', name: 'Innovation', count: 0 },
-    { id: 'Collaboration', name: 'Collaboration', count: 0 }
+    { id: 'all', name: 'All Stories', icon: BookOpen, color: 'blue' },
+    { id: 'Leadership', name: 'Leadership', icon: Crown, color: 'yellow' },
+    { id: 'Technical', name: 'Technical', icon: Target, color: 'green' },
+    { id: 'Innovation', name: 'Innovation', icon: Lightbulb, color: 'purple' },
+    { id: 'Collaboration', name: 'Collaboration', icon: HeartIcon, color: 'pink' }
   ]
 
   useEffect(() => {
@@ -109,18 +117,42 @@ The results exceeded expectations: we reduced response time by 80% and improved 
         },
         {
           id: '4',
-          title: 'Building Cross-Functional Collaboration',
-          content: `One of my most rewarding experiences was establishing a cross-functional collaboration framework between engineering, design, and product teams. The challenge was breaking down silos and creating a culture of shared ownership.
+          title: 'Building Cross-Functional Collaboration Excellence',
+          content: `When our company decided to launch a new product line, I was tasked with coordinating efforts across marketing, engineering, and sales teams. The challenge was aligning different departments with varying priorities and timelines.
 
-I initiated weekly cross-team workshops where we shared challenges, celebrated wins, and brainstormed solutions together. I also implemented a shared project management system that provided visibility into each team's priorities and dependencies.
+I established a collaborative framework that included weekly cross-functional meetings, shared project management tools, and clear communication protocols. I also created a feedback loop where each team could voice concerns and suggest improvements.
 
-The impact was transformative: project delivery time improved by 30%, and team satisfaction scores increased by 45%. Most importantly, we created a culture where teams genuinely enjoyed working together and felt invested in each other's success.`,
-          excerpt: 'Established a cross-functional collaboration framework that improved project delivery time by 30% and increased team satisfaction by 45%.',
+The result was a successful product launch that exceeded sales targets by 25% and received positive customer feedback. The collaborative framework became a company standard and improved interdepartmental relationships across the organization.`,
+          excerpt: 'Established a cross-functional collaboration framework that led to a successful product launch exceeding sales targets by 25% and became a company standard.',
           category: 'Collaboration',
           createdAt: '2024-02-12T16:45:00Z',
-          achievements: ['Improved delivery time by 30%', 'Increased team satisfaction by 45%', 'Established collaboration framework'],
-          tags: ['Collaboration', 'Team Building', 'Project Management'],
+          achievements: ['Exceeded sales targets by 25%', 'Established collaboration framework', 'Improved interdepartmental relationships'],
+          tags: ['Collaboration', 'Product Launch', 'Cross-functional'],
           wordCount: 134,
+          likes: 15,
+          comments: 4,
+          shares: 2,
+          readTime: '2 min read',
+          author: {
+            name: user.name,
+            avatar: user.avatar,
+            title: user.title
+          }
+        },
+        {
+          id: '5',
+          title: 'Mentoring Junior Developers to Senior Level',
+          content: `Over the past year, I've mentored three junior developers who have all been promoted to senior positions. My approach focused on creating a structured learning environment while encouraging independent problem-solving.
+
+I developed a mentorship program that included code reviews, pair programming sessions, and regular one-on-one meetings. I also encouraged my mentees to take on challenging projects and present their work to the team.
+
+The success of this mentorship program led to its adoption across the entire engineering department. All three mentees are now contributing significantly to our codebase and mentoring others themselves.`,
+          excerpt: 'Mentored three junior developers to senior positions through a structured program that was later adopted across the entire engineering department.',
+          category: 'Leadership',
+          createdAt: '2024-02-10T11:20:00Z',
+          achievements: ['Mentored 3 developers to senior level', 'Created mentorship program', 'Program adopted company-wide'],
+          tags: ['Mentorship', 'Leadership', 'Career Development'],
+          wordCount: 118,
           likes: 28,
           comments: 9,
           shares: 5,
@@ -134,51 +166,34 @@ The impact was transformative: project delivery time improved by 30%, and team s
       ]
       
       setStories(mockStories)
+      setLoading(false)
     } catch (error) {
       console.error('Error loading stories:', error)
       toast.error('Failed to load stories')
-    } finally {
       setLoading(false)
     }
   }
 
-  const handleCopyStory = (story) => {
+  const handleLike = (storyId) => {
+    const newLikedStories = new Set(likedStories)
+    if (newLikedStories.has(storyId)) {
+      newLikedStories.delete(storyId)
+      toast.success('Removed from favorites')
+    } else {
+      newLikedStories.add(storyId)
+      toast.success('Added to favorites')
+    }
+    setLikedStories(newLikedStories)
+  }
+
+  const handleShare = (story) => {
+    navigator.clipboard.writeText(`${story.title}\n\n${story.excerpt}\n\nRead more at: ${window.location.origin}/stories/${story.id}`)
+    toast.success('Story link copied to clipboard!')
+  }
+
+  const handleCopy = (story) => {
     navigator.clipboard.writeText(story.content)
-    toast.success('Story copied to clipboard!')
-  }
-
-  const handleDeleteStory = (storyId) => {
-    setStories(stories.filter(story => story.id !== storyId))
-    toast.success('Story deleted successfully')
-  }
-
-  const handleLikeStory = (storyId) => {
-    setLikedStories(prev => {
-      const newLiked = new Set(prev)
-      if (newLiked.has(storyId)) {
-        newLiked.delete(storyId)
-      } else {
-        newLiked.add(storyId)
-      }
-      return newLiked
-    })
-  }
-
-  const handleShareStory = (story) => {
-    // In a real app, this would open share options
-    toast.success('Share options opened!')
-  }
-
-  const toggleStoryExpansion = (storyId) => {
-    setExpandedStories(prev => {
-      const newExpanded = new Set(prev)
-      if (newExpanded.has(storyId)) {
-        newExpanded.delete(storyId)
-      } else {
-        newExpanded.add(storyId)
-      }
-      return newExpanded
-    })
+    toast.success('Story content copied to clipboard!')
   }
 
   const formatTimeAgo = (dateString) => {
@@ -188,345 +203,623 @@ The impact was transformative: project delivery time improved by 30%, and team s
     
     if (diffInHours < 1) return 'Just now'
     if (diffInHours < 24) return `${diffInHours}h ago`
-    if (diffInHours < 48) return 'Yesterday'
+    const diffInDays = Math.floor(diffInHours / 24)
+    if (diffInDays < 7) return `${diffInDays}d ago`
     return date.toLocaleDateString()
   }
 
-  const getCategoryColor = (category) => {
-    const colors = {
-      'Leadership': 'bg-blue-100 text-blue-800',
-      'Technical': 'bg-green-100 text-green-800',
-      'Innovation': 'bg-purple-100 text-purple-800',
-      'Collaboration': 'bg-orange-100 text-orange-800'
-    }
-    return colors[category] || 'bg-gray-100 text-gray-800'
+  const getCategoryIcon = (category) => {
+    const cat = categories.find(c => c.id === category)
+    return cat ? cat.icon : BookOpen
   }
 
-  const filteredStories = selectedCategory === 'all' 
-    ? stories 
-    : stories.filter(story => story.category === selectedCategory)
+  const getCategoryColor = (category) => {
+    const cat = categories.find(c => c.id === category)
+    return cat ? cat.color : 'blue'
+  }
+
+  // Filter stories based on search and category
+  const filteredStories = stories.filter(story => {
+    const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         story.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         story.content.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === 'all' || story.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
+
+  // Pagination logic
+  const storiesPerPage = 5
+  const totalStories = filteredStories.length
+  const totalPages = Math.ceil(totalStories / storiesPerPage)
+  const startIndex = (currentPage - 1) * storiesPerPage
+  const endIndex = startIndex + storiesPerPage
+  const currentStories = filteredStories.slice(startIndex, endIndex)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
 
   if (loading) {
     return (
       <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center`}>
-        <div className="spinner"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return (
-      <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center`}>
         <div className="text-center">
-          <h2 className={`text-2xl font-bold ${classes.text.primary} mb-4`}>Please sign in to access your stories</h2>
-          <p className={classes.text.secondary}>You need to be logged in to view your AI-generated stories.</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+          <p className={`${classes.text.secondary}`}>Loading your stories...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={`min-h-screen ${classes.bg.primary}`}>
-      {/* Professional Header */}
-      <div className={`${classes.bg.card} ${classes.border.primary} border-b shadow-sm sticky top-0 z-10`}>
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+    <div className={`min-h-screen ${classes.bg.primary} flex flex-col lg:flex-row`}>
+      {/* Left Sidebar - Sticky */}
+      <div className="w-full lg:w-80 flex-shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col">
+        {/* Sticky Header */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="w-12 h-12 bg-gradient-to-r from-cyan-500 via-magenta-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg"
+            >
+              <span className="text-white text-base font-bold">{user.name.charAt(0)}</span>
+            </motion.div>
             <div>
-              <h1 className={`text-lg font-semibold ${classes.text.primary}`}>Career Stories</h1>
-              <p className={`text-sm ${classes.text.secondary}`}>
-                AI-generated narratives based on your achievements and experience
+              <h1 className={`text-xl font-black ${classes.text.primary} mb-0.5`}>
+                Stories
+              </h1>
+              <p className={`text-xs ${classes.text.secondary} flex items-center gap-2`}>
+                <Sparkles className="w-3 h-3 text-cyan-500" />
+                Your career journey, <span className="bg-gradient-to-r from-cyan-500 to-magenta-500 bg-clip-text text-transparent font-semibold">powered by AI</span>
               </p>
             </div>
           </div>
         </div>
-      </div>
+        
+        {/* Scrollable Content */}
+        <div className="p-6 flex-1 overflow-y-auto space-y-6">
+          {/* Quick Actions */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-lg flex items-center justify-center">
+                <Zap className="w-3 h-3 text-white" />
+              </div>
+              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Quick Actions</h3>
+            </div>
+            <div className="space-y-2">
+              {[
+                { title: 'Create New Story', icon: Plus, action: () => setShowStoryModal(true), color: 'green' },
+                { title: 'View Dashboard', icon: BarChart3, action: () => window.location.href = '/dashboard', color: 'blue' },
+                { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview', color: 'yellow' },
+                { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume', color: 'purple' }
+              ].map((item, index) => (
+                <motion.button
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  onClick={item.action}
+                  className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:shadow-md ${classes.text.secondary} hover:${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`}
+                >
+                  <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
+                    <item.icon className={`w-4 h-4 text-cyan-500`} />
+                  </div>
+                  <span className="text-xs font-semibold">{item.title}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
 
-      {/* Three Column Layout */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-12 gap-6">
-          {/* Left Sidebar - Quick Access */}
-          <div className="col-span-3">
-            <div className="sticky top-24">
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Quick Access</h3>
-                <div className="space-y-2">
-                  {[
-                    { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
-                    { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
-                    { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
-                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
-                    { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
-                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
-                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
-                  ].map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={item.action}
-                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                        item.title === 'View Stories'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
-                          : `${classes.text.secondary} hover:${classes.text.primary}`
-                      }`}
-                    >
-                      <item.icon className="w-4 h-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">{item.title}</span>
-                    </button>
-                  ))}
+          {/* Categories */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-3 h-3 text-white" />
+              </div>
+              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Categories</h3>
+            </div>
+            <div className="space-y-2">
+              {categories.map((category, index) => (
+                <motion.button
+                  key={category.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1, duration: 0.6 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  onClick={() => {
+                    setSelectedCategory(category.id)
+                    setCurrentPage(1)
+                  }}
+                                     className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:shadow-md ${
+                     selectedCategory === category.id 
+                       ? `${classes.bg.secondary} ${classes.text.primary} shadow-md`
+                       : `${classes.text.secondary} hover:${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`
+                   }`}
+                >
+                                     <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
+                     <category.icon className={`w-4 h-4 text-cyan-500`} />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-xs font-semibold">{category.name}</span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {stories.filter(s => category.id === 'all' || s.category === category.id).length} stories
+                    </p>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.6 }}
+            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-3 h-3 text-white" />
+              </div>
+              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Your Stats</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-center p-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-400/20">
+                  <p className={`text-xs ${classes.text.secondary} mb-0.5`}>Total Stories</p>
+                  <p className={`text-sm font-bold ${classes.text.primary}`}>{stories.length}</p>
+                </div>
+                <div className="text-center p-2 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-lg border border-orange-400/20">
+                  <p className={`text-xs ${classes.text.secondary} mb-0.5`}>Total Views</p>
+                  <p className={`text-sm font-bold ${classes.text.primary}`}>{stories.reduce((sum, s) => sum + s.likes, 0)}</p>
                 </div>
               </div>
-              
-              {/* Stories Stats */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-3`}>Stories Stats</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Total Stories</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{stories.length}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Categories</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{categories.length - 1}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Total Words</span>
-                    <span className={`font-medium ${classes.text.primary}`}>
-                      {stories.reduce((sum, story) => sum + story.wordCount, 0)}
-                    </span>
-                  </div>
-                </div>
+              <div className="text-center p-2 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-lg border border-green-400/20">
+                <p className={`text-xs ${classes.text.secondary} mb-0.5`}>Average Read Time</p>
+                <p className={`text-sm font-bold ${classes.text.primary}`}>2.5 min</p>
               </div>
             </div>
-          </div>
+          </motion.div>
+        </div>
+      </div>
 
-          {/* Middle Column - Main Content */}
-          <div className="col-span-6">
-
-        {/* Stories Feed */}
-        {filteredStories.length > 0 ? (
-          <div className="space-y-8">
-            {filteredStories.map((story, index) => {
-              const isExpanded = expandedStories.has(story.id)
-              
-              return (
-                <motion.div
-                  key={story.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`card p-8 shadow-lg hover:shadow-xl transition-all duration-300 ${classes.bg.card} border ${classes.border.primary}`}
+      {/* Main Content Area with Right Sidebar */}
+      <div className="flex-1 flex flex-col lg:flex-row">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6">
+            <div className="space-y-6">
+              {/* Header */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="flex items-center justify-between"
+              >
+                <div>
+                  <h2 className={`text-2xl font-bold ${classes.text.primary} mb-2`}>
+                    {selectedCategory === 'all' ? 'All Stories' : `${selectedCategory} Stories`}
+                  </h2>
+                  <p className={`text-sm ${classes.text.secondary}`}>
+                    {totalStories} story{totalStories !== 1 ? 'ies' : ''} • {stories.reduce((sum, s) => sum + s.wordCount, 0)} words total
+                  </p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowStoryModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  {/* Story Header */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center space-x-3">
-                      <span className={`badge ${getCategoryColor(story.category)} px-3 py-1`}>
-                        {story.category}
-                      </span>
-                      <span className={`text-xs ${classes.text.muted} ${classes.bg.tertiary} px-2 py-1 rounded-full`}>
-                        AI Generated
-                      </span>
-                      <span className={`text-sm ${classes.text.muted}`}>•</span>
-                      <span className={`text-sm ${classes.text.muted}`}>{formatTimeAgo(story.createdAt)}</span>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteStory(story.id)}
-                      className={`p-2 ${classes.text.tertiary} hover:text-red-600 transition-colors rounded-full hover:bg-red-50`}
-                      title="Delete story"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
+                  <Plus className="w-4 h-4" />
+                  New Story
+                </motion.button>
+              </motion.div>
 
-                  {/* Story Content */}
-                  <div className="mb-6">
-                    <h4 className={`text-xl font-bold ${classes.text.primary} mb-3 leading-tight`}>
-                      {story.title}
-                    </h4>
-                    
-                    {!isExpanded ? (
-                      <p className={`${classes.text.secondary} leading-relaxed text-base mb-4`}>
-                        {story.excerpt}
-                      </p>
-                    ) : (
-                      <div className="mb-6">
-                        <div className={`whitespace-pre-wrap ${classes.text.secondary} leading-relaxed text-base mb-6`}>
-                          {story.content}
+              {/* Search */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.6 }}
+                className="relative"
+              >
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value)
+                    setCurrentPage(1)
+                  }}
+                  placeholder="Search stories..."
+                  className={`w-full px-4 py-3 pl-12 border-2 ${classes.border.primary} rounded-xl ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300`}
+                />
+                <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </motion.div>
+
+              {/* Stories Grid */}
+              <div className="space-y-6">
+                {currentStories.map((story, index) => (
+                  <motion.div
+                    key={story.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
+                    className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className={`w-10 h-10 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
+                            {(() => {
+                              const IconComponent = getCategoryIcon(story.category)
+                              return <IconComponent className="w-5 h-5 text-cyan-500" />
+                            })()}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className={`text-lg font-bold ${classes.text.primary} mb-1`}>
+                              {story.title}
+                            </h3>
+                            <div className="flex items-center gap-4 text-xs">
+                              <span className={`${classes.text.secondary} flex items-center gap-1`}>
+                                <Calendar className="w-3 h-3" />
+                                {formatTimeAgo(story.createdAt)}
+                              </span>
+                              <span className={`${classes.text.secondary} flex items-center gap-1`}>
+                                <Clock className="w-3 h-3" />
+                                {story.readTime}
+                              </span>
+                              <span className={`${classes.text.secondary} capitalize`}>
+                                {story.category}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                         
-                        {/* Achievements Section */}
-                        <div className={`${classes.bg.tertiary} p-4 rounded-lg mb-6`}>
-                          <h5 className={`font-semibold ${classes.text.primary} mb-3`}>Based on these achievements:</h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {story.achievements.map((achievement, achievementIndex) => (
-                              <div key={achievementIndex} className="flex items-center space-x-3">
-                                <Trophy className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                                <span className={`text-sm ${classes.text.secondary}`}>{achievement}</span>
-                              </div>
-                            ))}
+                        <p className={`text-sm ${classes.text.secondary} ${expandedStories.has(story.id) ? '' : 'line-clamp-3'} mb-4`}>
+                          {story.excerpt}
+                        </p>
+                        
+                        {story.excerpt.length > 150 && (
+                          <button
+                            onClick={() => {
+                              const newExpanded = new Set(expandedStories)
+                              if (newExpanded.has(story.id)) {
+                                newExpanded.delete(story.id)
+                              } else {
+                                newExpanded.add(story.id)
+                              }
+                              setExpandedStories(newExpanded)
+                            }}
+                            className={`text-xs font-medium mb-4 hover:underline ${classes.text.primary}`}
+                          >
+                            {expandedStories.has(story.id) ? 'Show less' : 'Show more'}
+                          </button>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleLike(story.id)}
+                              className={`flex items-center gap-1 p-2 rounded-lg transition-colors ${
+                                likedStories.has(story.id)
+                                  ? 'text-red-500 bg-red-50 dark:bg-red-900/20'
+                                  : 'text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
+                              }`}
+                            >
+                              <Heart className="w-4 h-4" />
+                              <span className="text-xs font-medium">{story.likes}</span>
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="flex items-center gap-1 p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                              <span className="text-xs font-medium">{story.comments}</span>
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleShare(story)}
+                              className="flex items-center gap-1 p-2 text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                            >
+                              <Share2 className="w-4 h-4" />
+                              <span className="text-xs font-medium">{story.shares}</span>
+                            </motion.button>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => handleCopy(story)}
+                              className="p-2 text-gray-400 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
+                              title="Copy content"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => {
+                                setSelectedStory(story)
+                                setShowStoryModal(true)
+                              }}
+                              className="p-2 text-gray-400 hover:text-cyan-500 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
+                              title="View full story"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </motion.button>
                           </div>
                         </div>
                       </div>
-                    )}
-                    
-                    {/* Toggle Button */}
-                    <button
-                      onClick={() => toggleStoryExpansion(story.id)}
-                      className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center space-x-1 hover:underline"
-                    >
-                      <span>{isExpanded ? 'Show less' : 'Read full story'}</span>
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Story Stats */}
-                  <div className={`flex items-center justify-between text-sm ${classes.text.muted} mb-6`}>
-                    <div className="flex items-center space-x-6">
-                      <span className="flex items-center space-x-2">
-                        <Clock className="w-4 h-4" />
-                        <span>{story.readTime}</span>
-                      </span>
-                      <span className="flex items-center space-x-2">
-                        <Trophy className="w-4 h-4" />
-                        <span>{story.achievements.length} achievements</span>
-                      </span>
-                      <span className="flex items-center space-x-2">
-                        <TrendingUp className="w-4 h-4" />
-                        <span>{story.wordCount} words</span>
-                      </span>
                     </div>
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {story.tags.slice(0, 4).map((tag, tagIndex) => (
-                      <span key={tagIndex} className={`px-3 py-1 ${classes.bg.tertiary} ${classes.text.secondary} text-sm rounded-full border ${classes.border.primary}`}>
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Interaction Bar */}
-                  <div className={`flex items-center justify-between pt-6 border-t ${classes.border.primary}`}>
-                    <div className="flex items-center space-x-8">
-                      <button
-                        onClick={() => handleLikeStory(story.id)}
-                        className={`flex items-center space-x-2 transition-colors ${
-                          likedStories.has(story.id) 
-                            ? 'text-red-600' 
-                            : `${classes.text.muted} hover:text-red-600`
-                        }`}
-                      >
-                        <Heart className={`w-5 h-5 ${likedStories.has(story.id) ? 'fill-current' : ''}`} />
-                        <span className="text-sm font-medium">{story.likes + (likedStories.has(story.id) ? 1 : 0)}</span>
-                      </button>
-                      
-                      <button className={`flex items-center space-x-2 ${classes.text.muted} hover:${classes.text.secondary} transition-colors`}>
-                        <MessageCircle className="w-5 h-5" />
-                        <span className="text-sm font-medium">{story.comments}</span>
-                      </button>
-                      
-                      <button
-                        onClick={() => handleShareStory(story)}
-                        className={`flex items-center space-x-2 ${classes.text.muted} hover:${classes.text.secondary} transition-colors`}
-                      >
-                        <Share2 className="w-5 h-5" />
-                        <span className="text-sm font-medium">{story.shares}</span>
-                      </button>
-                    </div>
-                    
-                    <button
-                      onClick={() => handleCopyStory(story)}
-                      className="text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-full hover:bg-gray-100"
-                      title="Copy story"
-                    >
-                      <Copy className="w-5 h-5" />
-                    </button>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-16"
-          >
-            <div className="w-20 h-20 bg-gradient-to-r from-primary-100 to-accent-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="w-10 h-10 text-primary-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">No Stories Yet</h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto text-lg">
-              Your AI will automatically generate career stories based on your logged achievements. Keep tracking your accomplishments!
-            </p>
-            <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
-              <Sparkles className="w-4 h-4" />
-              <span>Stories are generated automatically from your achievements</span>
-            </div>
-          </motion.div>
-        )}
-          </div>
-
-          {/* Right Sidebar - Story Categories */}
-          <div className="col-span-3">
-            <div className="sticky top-24">
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Story Categories</h3>
-                <div className="space-y-2">
-                  {categories.map((category) => {
-                    const count = category.id === 'all' 
-                      ? stories.length 
-                      : stories.filter(story => story.category === category.id).length;
-                    return (
-                      <button
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full flex items-center justify-between p-2 rounded-lg text-xs transition-colors ${
-                          selectedCategory === category.id
-                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                            : `${classes.text.secondary} hover:${classes.bg.secondary}`
-                        }`}
-                      >
-                        <span>{category.name}</span>
-                        <span className={`font-medium px-2 py-0.5 rounded-full ${
-                          selectedCategory === category.id 
-                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                        }`}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+                  </motion.div>
+                ))}
               </div>
-              
-              {/* Recent Stories */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4 mt-4`}>
-                <h3 className={`text-sm font-medium ${classes.text.primary} mb-4`}>Recent Stories</h3>
-                <div className="space-y-3">
-                  {stories.slice(0, 5).map((story, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-xs ${classes.text.primary} font-medium truncate`}>
-                          {story.title}
-                        </p>
-                        <p className={`text-xs ${classes.text.secondary} mt-1`}>
-                          {formatTimeAgo(story.createdAt)}
-                        </p>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.5, duration: 0.6 }}
+                  className="mt-8"
+                >
+                  <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 shadow-lg`}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-lg flex items-center justify-center">
+                          <BarChart3 className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <h3 className={`text-sm font-bold ${classes.text.primary}`}>Story Pages</h3>
+                          <p className={`text-xs ${classes.text.secondary}`}>
+                            Showing {startIndex + 1}-{Math.min(endIndex, totalStories)} of {totalStories} stories
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs ${classes.text.secondary} font-medium`}>Page</span>
+                        <span className={`text-sm font-bold ${classes.text.primary} bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 px-3 py-1 rounded-lg`}>
+                          {currentPage} of {totalPages}
+                        </span>
                       </div>
                     </div>
-                  ))}
+                    
+                    <div className="flex items-center justify-center gap-3">
+                      <motion.button
+                        whileHover={{ scale: 1.05, x: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                          currentPage === 1
+                            ? `${classes.bg.tertiary} ${classes.text.muted} cursor-not-allowed`
+                            : `${classes.bg.card} ${classes.border.primary} border hover:shadow-md ${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`
+                        }`}
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        Previous
+                      </motion.button>
+                      
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <motion.button
+                            key={page}
+                            whileHover={{ scale: 1.1, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handlePageChange(page)}
+                            className={`w-10 h-10 rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center ${
+                              currentPage === page
+                                ? 'bg-gradient-to-r from-cyan-500 to-magenta-500 text-white shadow-lg'
+                                : `${classes.bg.card} ${classes.border.primary} border hover:shadow-md ${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-magenta-500/10`
+                            }`}
+                          >
+                            {page}
+                          </motion.button>
+                        ))}
+                      </div>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05, x: 2 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                          currentPage === totalPages
+                            ? `${classes.bg.tertiary} ${classes.text.muted} cursor-not-allowed`
+                            : `${classes.bg.card} ${classes.border.primary} border hover:shadow-md ${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`
+                        }`}
+                      >
+                        Next
+                        <ChevronRight className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar - Sticky */}
+        <div className="w-full lg:w-80 flex-shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col">
+          {/* Sticky Header */}
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <Activity className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h2 className={`text-lg font-bold ${classes.text.primary}`}>Recent Activity</h2>
+                <p className={`text-xs ${classes.text.secondary}`}>Your latest story interactions</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Scrollable Content */}
+          <div className="p-4 flex-1 overflow-y-auto space-y-4">
+            {/* Recent Activity */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+              <h3 className={`text-sm font-bold ${classes.text.primary} mb-3`}>Recent Stories</h3>
+              <div className="space-y-3">
+                {stories.slice(0, 3).map((story, index) => (
+                  <motion.div
+                    key={story.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
+                    className="flex items-start gap-3"
+                  >
+                                         <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center flex-shrink-0`}>
+                       {(() => {
+                         const IconComponent = getCategoryIcon(story.category)
+                         return <IconComponent className="w-3 h-3 text-cyan-500" />
+                       })()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-xs font-medium ${classes.text.primary} line-clamp-2`}>
+                        {story.title}
+                      </p>
+                      <p className={`text-xs ${classes.text.secondary} mt-1`}>
+                        {formatTimeAgo(story.createdAt)}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Popular Tags */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+              <h3 className={`text-sm font-bold ${classes.text.primary} mb-3`}>Popular Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {['Leadership', 'Technical', 'Innovation', 'Collaboration', 'Mentorship'].map((tag, index) => (
+                  <motion.span
+                    key={tag}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
+                    className="px-2 py-1 bg-gradient-to-r from-cyan-500/10 to-magenta-500/10 text-cyan-600 dark:text-cyan-400 text-xs rounded-lg border border-cyan-400/20"
+                  >
+                    {tag}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+
+            {/* Writing Tips */}
+            <div className={`${classes.bg.card} ${classes.border.primary} border rounded-lg p-4`}>
+              <h3 className={`text-sm font-bold ${classes.text.primary} mb-3`}>Writing Tips</h3>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className={`text-xs ${classes.text.secondary}`}>Start with a compelling hook</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-magenta-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className={`text-xs ${classes.text.secondary}`}>Include specific metrics and results</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className={`text-xs ${classes.text.secondary}`}>Share lessons learned</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Story Modal */}
+      {showStoryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className={`${classes.bg.card} rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col`}>
+            <div className={`${classes.bg.secondary} px-6 py-4 border-b ${classes.border.primary} flex items-center justify-between`}>
+              <div className="flex items-center gap-3">
+                <BookOpen className="w-6 h-6 text-cyan-500" />
+                <h3 className={`font-semibold ${classes.text.primary}`}>
+                  {selectedStory ? 'Edit Story' : 'Create New Story'}
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowStoryModal(false)
+                  setSelectedStory(null)
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto flex-1">
+              <div className="space-y-4">
+                <div>
+                  <label className={`block text-sm font-medium ${classes.text.primary} mb-2`}>
+                    Story Title
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your story title..."
+                    className={`w-full px-4 py-3 border-2 ${classes.border.primary} rounded-xl ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300`}
+                  />
+                </div>
+                
+                <div>
+                  <label className={`block text-sm font-medium ${classes.text.primary} mb-2`}>
+                    Category
+                  </label>
+                  <select className={`w-full px-4 py-3 border-2 ${classes.border.primary} rounded-xl ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300`}>
+                    {categories.filter(c => c.id !== 'all').map(category => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className={`block text-sm font-medium ${classes.text.primary} mb-2`}>
+                    Story Content
+                  </label>
+                  <textarea
+                    rows={8}
+                    placeholder="Write your story here... Share your experiences, challenges, and achievements..."
+                    className={`w-full px-4 py-3 border-2 ${classes.border.primary} rounded-xl ${classes.bg.input} ${classes.text.primary} focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300 resize-none`}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className={`px-6 py-4 border-t ${classes.border.primary} ${classes.bg.secondary}`}>
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setShowStoryModal(false)
+                    setSelectedStory(null)
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-300">
+                  {selectedStory ? 'Update Story' : 'Create Story'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
