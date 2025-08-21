@@ -340,68 +340,8 @@ const ProfilePage = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-12 gap-6">
-          {/* Left Sidebar - Quick Access */}
-          <div className="col-span-3">
-            <div className="sticky top-24">
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}>
-                <h3 className={`text-sm font-bold ${classes.text.primary} mb-4 flex items-center gap-2`}>
-                  <Zap className="w-4 h-4 text-cyan-500" />
-                  Quick Access
-                </h3>
-                <div className="space-y-2">
-                  {[
-                    { title: 'Dashboard', icon: Home, action: () => window.location.href = '/dashboard' },
-                    { title: 'Log Achievement', icon: Plus, action: () => window.location.href = '/dashboard' },
-                    { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume' },
-                    { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview' },
-                    { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories' },
-                    { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach' },
-                    { title: 'Profile', icon: User, action: () => window.location.href = '/profile' }
-                  ].map((item, index) => (
-                                         <button
-                       key={index}
-                       onClick={item.action}
-                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-magenta-500/10 ${classes.text.secondary} hover:${classes.text.primary}`}
-                     >
-                       <div className={`w-6 h-6 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
-                         <item.icon className={`w-3 h-3 text-cyan-500`} />
-                       </div>
-                       <span className="text-sm font-medium">{item.title}</span>
-                     </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Profile Stats */}
-              <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 mt-4 shadow-lg`}>
-                <h3 className={`text-sm font-bold ${classes.text.primary} mb-3 flex items-center gap-2`}>
-                  <BarChart3 className="w-4 h-4 text-magenta-500" />
-                  Profile Stats
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Level</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.level}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Experience</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.experience} XP</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Streak</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.streak} days</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className={classes.text.secondary}>Achievements</span>
-                    <span className={`font-medium ${classes.text.primary}`}>{profile.stats.achievements}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Middle Column - Main Profile Content */}
-          <div className="col-span-6">
+          {/* Main Profile Content */}
+          <div className="col-span-8">
             {/* Compact Profile Header */}
             <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-6 mb-6 shadow-lg`}>
               <div className="flex items-center gap-4">
@@ -632,7 +572,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Right Sidebar - Social Links & Activity */}
-          <div className="col-span-3">
+          <div className="col-span-4">
             <div className="sticky top-24">
               {/* Social Links */}
               <div className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 mb-4 shadow-lg`}>

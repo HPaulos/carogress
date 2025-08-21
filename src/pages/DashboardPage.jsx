@@ -39,6 +39,17 @@ const DashboardPage = () => {
   // Mock user data
   const user = { name: 'John Doe' }
 
+  // Achievement categories
+  const achievementCategories = [
+    { id: 'all', name: 'All Achievements', icon: Trophy, color: 'blue' },
+    { id: 'work', name: 'Work', icon: Briefcase, color: 'green' },
+    { id: 'leadership', name: 'Leadership', icon: Crown, color: 'yellow' },
+    { id: 'learning', name: 'Learning', icon: BookOpen, color: 'purple' },
+    { id: 'personal', name: 'Personal', icon: Heart, color: 'pink' }
+  ]
+
+
+
   // Hardcoded achievements for testing
   const allAchievements = [
     {
@@ -366,45 +377,7 @@ const DashboardPage = () => {
         {/* Scrollable Content */}
         <div className="p-6 flex-1 overflow-y-auto space-y-6">
 
-          {/* Quick Access */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-lg flex items-center justify-center">
-                <Zap className="w-3 h-3 text-white" />
-              </div>
-              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Quick Access</h3>
-            </div>
-            <div className="space-y-2">
-              {[
-                { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume', color: 'magenta' },
-                { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview', color: 'yellow' },
-                { title: 'View Stories', icon: BookOpen, action: () => window.location.href = '/stories', color: 'purple' },
-                { title: 'AI Career Coach', icon: Sparkles, action: () => window.location.href = '/ai-coach', color: 'pink' },
-                { title: 'Profile', icon: User, action: () => window.location.href = '/profile', color: 'blue' }
-              ].map((item, index) => (
-                <motion.button
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  onClick={item.action}
-                  className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:shadow-md ${classes.text.secondary} hover:${classes.text.primary} hover:bg-gradient-to-r hover:from-${item.color}-500/5 hover:to-${item.color}-600/5`}
-                >
-                  <div className={`w-8 h-8 bg-gradient-to-r from-${item.color}-500/20 to-${item.color}-600/20 rounded-lg flex items-center justify-center`}>
-                    <item.icon className={`w-4 h-4 text-${item.color}-500`} />
-                  </div>
-                  <span className="text-xs font-semibold">{item.title}</span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-          
+
           {/* Progress Section */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -477,6 +450,60 @@ const DashboardPage = () => {
                   </div>
                 </div>
               )}
+            </div>
+          </motion.div>
+
+          {/* Categories Filter */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <Trophy className="w-3 h-3 text-white" />
+              </div>
+              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Categories</h3>
+            </div>
+            <div className="space-y-2">
+              {achievementCategories.map((category, index) => (
+                <motion.button
+                  key={category.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  onClick={() => {
+                    setSelectedCategory(category.id)
+                    setCurrentPage(1)
+                  }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-300 hover:shadow-lg ${
+                    selectedCategory === category.id 
+                      ? `bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 border border-cyan-400/40 shadow-lg ${classes.text.primary}`
+                      : `bg-gradient-to-r from-gray-50/50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-700/50 border border-gray-200/50 dark:border-gray-600/50 hover:from-cyan-500/10 hover:to-magenta-500/10 hover:border-cyan-400/30 ${classes.text.secondary} hover:${classes.text.primary}`
+                  }`}
+                >
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
+                    selectedCategory === category.id 
+                      ? 'bg-gradient-to-r from-cyan-500 to-magenta-500'
+                      : 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600'
+                  }`}>
+                    <category.icon className={`w-5 h-5 ${
+                      selectedCategory === category.id ? 'text-white' : 'text-gray-600 dark:text-gray-400'
+                    }`} />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-sm font-semibold">{category.name}</span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {allAchievements.filter(a => category.id === 'all' || a.category === category.id).length} achievements
+                    </p>
+                  </div>
+                  {selectedCategory === category.id && (
+                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-full"></div>
+                  )}
+                </motion.button>
+              ))}
             </div>
           </motion.div>
         </div>
@@ -633,7 +660,14 @@ const DashboardPage = () => {
                     <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
                       <Trophy className="w-3 h-3 text-white" />
                     </div>
-                    <h3 className={`text-lg font-bold ${classes.text.primary}`}>Recent Achievements</h3>
+                    <div>
+                      <h3 className={`text-lg font-bold ${classes.text.primary}`}>
+                        {selectedCategory === 'all' ? 'Recent Achievements' : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Achievements`}
+                      </h3>
+                      <p className={`text-xs ${classes.text.secondary}`}>
+                        {totalAchievements} achievement{totalAchievements !== 1 ? 's' : ''} • {selectedCategory === 'all' ? 'All categories' : achievementCategories.find(c => c.id === selectedCategory)?.name}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex-1 h-px bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700"></div>
                 </div>

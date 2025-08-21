@@ -278,43 +278,7 @@ The success of this mentorship program led to its adoption across the entire eng
         
         {/* Scrollable Content */}
         <div className="p-6 flex-1 overflow-y-auto space-y-6">
-          {/* Quick Actions */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className={`${classes.bg.card} ${classes.border.primary} border rounded-xl p-4 shadow-lg`}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-lg flex items-center justify-center">
-                <Zap className="w-3 h-3 text-white" />
-              </div>
-              <h3 className={`text-sm font-bold ${classes.text.primary}`}>Quick Actions</h3>
-            </div>
-            <div className="space-y-2">
-              {[
-                { title: 'Create New Story', icon: Plus, action: () => setShowStoryModal(true), color: 'green' },
-                { title: 'View Dashboard', icon: BarChart3, action: () => window.location.href = '/dashboard', color: 'blue' },
-                { title: 'Interview Prep', icon: MessageSquare, action: () => window.location.href = '/interview', color: 'yellow' },
-                { title: 'Generate Resume', icon: FileText, action: () => window.location.href = '/resume', color: 'purple' }
-              ].map((item, index) => (
-                <motion.button
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  onClick={item.action}
-                  className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:shadow-md ${classes.text.secondary} hover:${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`}
-                >
-                  <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
-                    <item.icon className={`w-4 h-4 text-cyan-500`} />
-                  </div>
-                  <span className="text-xs font-semibold">{item.title}</span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
+
 
           {/* Categories */}
           <motion.div 
@@ -341,21 +305,30 @@ The success of this mentorship program led to its adoption across the entire eng
                     setSelectedCategory(category.id)
                     setCurrentPage(1)
                   }}
-                                     className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all duration-300 hover:shadow-md ${
-                     selectedCategory === category.id 
-                       ? `${classes.bg.secondary} ${classes.text.primary} shadow-md`
-                       : `${classes.text.secondary} hover:${classes.text.primary} hover:bg-gradient-to-r hover:from-cyan-500/5 hover:to-magenta-500/5`
-                   }`}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-300 hover:shadow-lg ${
+                    selectedCategory === category.id 
+                      ? `bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/40 shadow-lg ${classes.text.primary}`
+                      : `bg-gradient-to-r from-gray-50/50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-700/50 border border-gray-200/50 dark:border-gray-600/50 hover:from-purple-500/10 hover:to-pink-500/10 hover:border-purple-400/30 ${classes.text.secondary} hover:${classes.text.primary}`
+                  }`}
                 >
-                                     <div className={`w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 rounded-lg flex items-center justify-center`}>
-                     <category.icon className={`w-4 h-4 text-cyan-500`} />
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
+                    selectedCategory === category.id 
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                      : 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600'
+                  }`}>
+                    <category.icon className={`w-5 h-5 ${
+                      selectedCategory === category.id ? 'text-white' : 'text-gray-600 dark:text-gray-400'
+                    }`} />
                   </div>
                   <div className="flex-1">
-                    <span className="text-xs font-semibold">{category.name}</span>
+                    <span className="text-sm font-semibold">{category.name}</span>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {stories.filter(s => category.id === 'all' || s.category === category.id).length} stories
                     </p>
                   </div>
+                  {selectedCategory === category.id && (
+                    <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                  )}
                 </motion.button>
               ))}
             </div>
