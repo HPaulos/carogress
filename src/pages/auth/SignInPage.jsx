@@ -143,28 +143,92 @@ const SignInPage = () => {
   }
 
   return (
-    <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center p-4`}>
-      <div className="w-full max-w-md">
+    <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center p-4 relative overflow-hidden`}>
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        <motion.div
+          animate={{
+            background: [
+              'radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%)',
+            ],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute inset-0"
+        />
+      </div>
+      
+      {/* Floating Elements */}
+      <div className="absolute inset-0">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
+            style={{
+              left: `${10 + i * 20}%`,
+              top: `${20 + i * 15}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              rotate: [0, 180, 360],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 8 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5
+            }}
+          >
+            <div className={`w-${8 + i * 2} h-${8 + i * 2} bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-sm`} />
+          </motion.div>
+        ))}
+      </div>
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mr-3">
-              <Bot className="w-6 h-6 text-white" />
+          <motion.div 
+            className="flex items-center justify-center mb-6"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <Bot className="w-8 h-8 text-white" />
             </div>
-            <h1 className={`text-2xl font-bold ${classes.text.primary}`}>
+            <h1 className={`text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}>
               AI Career Tracker
             </h1>
-          </div>
-          <h2 className={`text-3xl font-bold ${classes.text.primary} mb-2`}>
-            Welcome back
-          </h2>
-          <p className={`${classes.text.secondary}`}>
-            Sign in to continue your career journey
-          </p>
+          </motion.div>
+          <motion.h2 
+            className={`text-4xl md:text-5xl font-bold ${classes.text.primary} mb-4 leading-tight`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            Welcome
+            <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Back
+            </span>
+          </motion.h2>
+          <motion.p 
+            className={`text-lg ${classes.text.secondary} max-w-sm mx-auto leading-relaxed`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            Sign in to continue your career journey with AI-powered insights
+          </motion.p>
         </motion.div>
 
         {/* Test Users Section */}
@@ -172,9 +236,13 @@ const SignInPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className={`${classes.bg.card} ${classes.border.primary} border rounded-2xl shadow-xl p-6 mb-6`}
+          className={`group relative ${classes.bg.card} ${classes.border.primary} border rounded-2xl shadow-xl p-6 mb-6 hover:shadow-2xl transition-all duration-300 overflow-hidden`}
         >
-          <button
+          {/* Background Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          <div className="relative">
+            <button
             onClick={() => setShowTestUsers(!showTestUsers)}
             className={`w-full flex items-center justify-between p-3 ${classes.bg.tertiary} ${classes.border.primary} border rounded-xl hover:${classes.bg.secondary} transition-colors`}
           >
@@ -235,6 +303,10 @@ const SignInPage = () => {
               </motion.div>
             )}
           </AnimatePresence>
+          
+          {/* Hover Effect */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+        </div>
         </motion.div>
 
         {/* Main Form Card */}
@@ -242,10 +314,14 @@ const SignInPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className={`${classes.bg.card} ${classes.border.primary} border rounded-2xl shadow-xl p-8`}
+          className={`group relative ${classes.bg.card} ${classes.border.primary} border rounded-2xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 overflow-hidden`}
         >
-          {/* Social Login Buttons */}
-          <div className="mb-6">
+          {/* Background Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          <div className="relative">
+            {/* Social Login Buttons */}
+            <div className="mb-6">
             <div className="grid grid-cols-3 gap-3">
               {[
                 { icon: Github, label: 'GitHub', color: 'hover:bg-gray-100 dark:hover:bg-gray-800' },
@@ -396,6 +472,10 @@ const SignInPage = () => {
               </Link>
             </p>
           </div>
+          
+          {/* Hover Effect */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+        </div>
         </motion.div>
 
         {/* Features Preview */}
@@ -405,21 +485,29 @@ const SignInPage = () => {
           transition={{ delay: 0.2 }}
           className="mt-8 text-center"
         >
-          <div className={`${classes.bg.card} ${classes.border.primary} border rounded-2xl p-6`}>
-            <h3 className={`font-semibold ${classes.text.primary} mb-4`}>
-              Why choose AI Career Tracker?
-            </h3>
-            <div className="grid grid-cols-1 gap-3 text-sm">
-              {[
-                { icon: Sparkles, text: 'AI-powered career insights and recommendations' },
-                { icon: CheckCircle, text: 'Track achievements and build compelling stories' },
-                { icon: Bot, text: 'Personalized interview preparation and resume building' }
-              ].map((feature, index) => (
-                <div key={index} className="flex items-center justify-center">
-                  <feature.icon className={`w-4 h-4 ${classes.text.secondary} mr-2`} />
-                  <span className={classes.text.secondary}>{feature.text}</span>
-                </div>
-              ))}
+          <div className={`group relative ${classes.bg.card} ${classes.border.primary} border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 overflow-hidden`}>
+            {/* Background Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative">
+              <h3 className={`font-semibold ${classes.text.primary} mb-4`}>
+                Why choose AI Career Tracker?
+              </h3>
+              <div className="grid grid-cols-1 gap-3 text-sm">
+                {[
+                  { icon: Sparkles, text: 'AI-powered career insights and recommendations' },
+                  { icon: CheckCircle, text: 'Track achievements and build compelling stories' },
+                  { icon: Bot, text: 'Personalized interview preparation and resume building' }
+                ].map((feature, index) => (
+                  <div key={index} className="flex items-center justify-center">
+                    <feature.icon className={`w-4 h-4 ${classes.text.secondary} mr-2`} />
+                    <span className={classes.text.secondary}>{feature.text}</span>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Hover Effect */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
             </div>
           </div>
         </motion.div>

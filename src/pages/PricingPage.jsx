@@ -302,10 +302,13 @@ const PricingPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative ${classes.bg.card} rounded-2xl border ${classes.border.primary} p-8 ${
+                className={`group relative ${classes.bg.card} rounded-2xl border ${classes.border.primary} p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden ${
                   plan.popular ? 'ring-2 ring-blue-500 shadow-xl scale-105' : ''
                 }`}
               >
+                {/* Background Gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium">
@@ -322,7 +325,7 @@ const PricingPage = () => {
                   </div>
                 )}
 
-                <div className="text-center mb-8">
+                <div className="relative text-center mb-8">
                   <h3 className={`text-2xl font-bold ${classes.text.primary} mb-2`}>{plan.name}</h3>
                   <p className={`${classes.text.secondary} mb-6`}>{plan.description}</p>
                   
@@ -371,6 +374,9 @@ const PricingPage = () => {
                     ))}
                   </div>
                 )}
+                
+                {/* Hover Effect */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
               </motion.div>
             ))}
           </div>

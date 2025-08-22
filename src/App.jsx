@@ -11,6 +11,7 @@ import AboutPage from './pages/AboutPage'
 import DashboardPage from './pages/DashboardPage'
 import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import StoriesPage from './pages/StoriesPage'
 import InterviewPage from './pages/InterviewPage'
 import ResumePage from './pages/ResumePage'
@@ -64,6 +65,7 @@ function AppContent() {
           <Route path="/ai-coach" element={<AICoachPage />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         </Routes>
       </AnimatePresence>
       <AIChatbot />

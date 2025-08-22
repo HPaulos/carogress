@@ -344,10 +344,13 @@ const FeaturesPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`group ${classes.bg.card} rounded-2xl border ${classes.border.primary} p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2`}
+                className={`group relative ${classes.bg.card} rounded-2xl border ${classes.border.primary} p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden`}
               >
-                <div className="flex items-start gap-6">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+                {/* Background Gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                
+                <div className="relative flex items-start gap-6">
+                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0 shadow-lg`}>
                     <feature.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
@@ -373,6 +376,9 @@ const FeaturesPage = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Hover Effect */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
               </motion.div>
             ))}
           </div>

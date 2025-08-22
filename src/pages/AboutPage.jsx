@@ -364,13 +364,21 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`group ${classes.bg.card} rounded-2xl border ${classes.border.primary} p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2`}
+                className={`group relative ${classes.bg.card} rounded-2xl border ${classes.border.primary} p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden`}
               >
-                <div className={`w-16 h-16 bg-gradient-to-r ${value.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <value.icon className="w-8 h-8 text-white" />
+                {/* Background Gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${value.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                
+                <div className="relative">
+                  <div className={`w-16 h-16 bg-gradient-to-r ${value.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                    <value.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className={`text-xl font-bold ${classes.text.primary} mb-4`}>{value.title}</h3>
+                  <p className={`${classes.text.secondary} leading-relaxed`}>{value.description}</p>
                 </div>
-                <h3 className={`text-xl font-bold ${classes.text.primary} mb-4`}>{value.title}</h3>
-                <p className={`${classes.text.secondary} leading-relaxed`}>{value.description}</p>
+                
+                {/* Hover Effect */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
               </motion.div>
             ))}
           </div>
@@ -476,7 +484,7 @@ const AboutPage = () => {
                 transition={{ delay: index * 0.1 }}
                 className={`${classes.bg.card} rounded-2xl border ${classes.border.primary} p-6 text-center`}
               >
-                <div className={`w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4`}>
+                <div className={`w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
                   <milestone.icon className="w-8 h-8 text-white" />
                 </div>
                 <div className="text-2xl font-bold text-blue-600 mb-2">{milestone.year}</div>
