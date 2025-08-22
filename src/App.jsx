@@ -18,6 +18,7 @@ import InterviewPage from './pages/InterviewPage'
 import ResumePage from './pages/ResumePage'
 import DocumentDetailsPage from './pages/DocumentDetailsPage'
 import ProfilePage from './pages/ProfilePage'
+import SettingsPage from './pages/SettingsPage'
 import AICoachPage from './pages/AICoachPage'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -91,6 +92,11 @@ function AppContent() {
           <Route path="/profile" element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           } />
           <Route path="/ai-coach" element={

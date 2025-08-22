@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
   ArrowRight, 
   CheckCircle, 
@@ -43,10 +43,18 @@ import { useThemeClasses } from '../theme/useTheme'
 import toast from 'react-hot-toast'
 
 const HomePage = () => {
-  const { user } = useAuth()
+  const { currentUser } = useAuth()
   const { classes } = useThemeClasses()
+  const navigate = useNavigate()
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+
+  // Redirect logged-in users to dashboard
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/dashboard')
+    }
+  }, [currentUser, navigate])
 
   const features = [
     {
@@ -189,7 +197,7 @@ const HomePage = () => {
   }
 
   const handleGetStarted = () => {
-    if (user) {
+    if (currentUser) {
       toast.success('Welcome back! Redirecting to your dashboard...')
     } else {
       toast.success('Let\'s start your career journey!')
@@ -390,7 +398,7 @@ const HomePage = () => {
                 className="flex flex-col sm:flex-row items-start gap-4"
               >
                 <Link
-                  to={user ? '/dashboard' : '/signup'}
+                  to={currentUser ? '/dashboard' : '/signup'}
                   onClick={handleGetStarted}
                   className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 via-magenta-500 to-yellow-500 hover:from-cyan-600 hover:via-magenta-600 hover:to-yellow-600 text-white rounded-xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105 overflow-hidden"
                 >
@@ -950,7 +958,7 @@ const HomePage = () => {
                 </ul>
 
                 <Link
-                  to={user ? '/dashboard' : '/signup'}
+                  to={currentUser ? '/dashboard' : '/signup'}
                   className={`block w-full text-center py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                     plan.popular
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
@@ -982,7 +990,7 @@ const HomePage = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                to={user ? '/dashboard' : '/signup'}
+                to={currentUser ? '/dashboard' : '/signup'}
                 className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <span className="flex items-center gap-2">

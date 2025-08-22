@@ -5,7 +5,8 @@ import {
   signOut, 
   onAuthStateChanged,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
+  updatePassword
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
@@ -117,6 +118,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Update password function
+  const updatePassword = async (newPassword) => {
+    try {
+      if (!currentUser) {
+        throw new Error('No user is currently signed in');
+      }
+      
+      await updatePassword(currentUser, newPassword);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
@@ -144,6 +158,7 @@ export const AuthProvider = ({ children }) => {
     resetPassword,
     getUserProfile,
     updateUserProfile,
+    updatePassword,
     loading
   };
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { 
   User, 
   Mail, 
@@ -97,7 +98,6 @@ import { getRandomMockUser } from '../utils/mockUserData'
 import toast from 'react-hot-toast'
 
 const ProfilePage = () => {
-  const { currentUser } = useAuth()
   const { classes } = useThemeClasses()
   const [mockUser] = useState(getRandomMockUser())
   const [profile, setProfile] = useState(null)
@@ -155,21 +155,19 @@ const ProfilePage = () => {
   }
 
   const loadProfile = async () => {
-    if (!user) return
-    
     try {
       setLoading(true)
       // Mock profile data - in real app, this would fetch from API
       const mockProfile = {
         id: mockUser.id,
-        name: 'John Doe',
-        email: 'john.doe@email.com',
+        name: mockUser.name,
+        email: mockUser.email,
         phone: '+1 (555) 123-4567',
         location: 'San Francisco, CA',
-        title: 'Senior Software Engineer',
+        title: mockUser.title,
         company: 'TechCorp Inc.',
         bio: 'Passionate software engineer with 5+ years of experience in full-stack development. Specialized in React, Node.js, and cloud technologies. Always eager to learn new technologies and solve complex problems.',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+        avatar: mockUser.avatar,
         coverImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=300&fit=crop',
         skills: ['React', 'Node.js', 'TypeScript', 'AWS', 'Docker', 'MongoDB', 'PostgreSQL'],
         goals: ['Lead a development team', 'Master cloud architecture', 'Contribute to open source'],
@@ -334,6 +332,13 @@ const ProfilePage = () => {
                 {editing ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
                 {editing ? 'Save Changes' : 'Edit Profile'}
               </button>
+              <Link
+                to="/settings"
+                className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                <Settings className="w-4 h-4" />
+                Settings
+              </Link>
             </div>
           </div>
         </div>
