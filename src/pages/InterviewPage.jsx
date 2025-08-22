@@ -9,10 +9,11 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
+import { getRandomMockUser } from '../utils/mockUserData'
 import toast from 'react-hot-toast'
 
 const InterviewPage = () => {
-  const { user } = useAuth()
+  const { currentUser } = useAuth()
   const { classes } = useThemeClasses()
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -26,6 +27,7 @@ const InterviewPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
+  const [mockUser] = useState(getRandomMockUser())
 
   const categories = [
     { id: 'all', name: 'All Questions', icon: Brain, color: 'blue' },
@@ -37,11 +39,9 @@ const InterviewPage = () => {
 
   useEffect(() => {
     loadQuestions()
-  }, [user])
+  }, [currentUser])
 
   const loadQuestions = async () => {
-    if (!user) return
-    
     try {
       // Mock questions based on user's achievements
       const mockQuestions = [
@@ -235,7 +235,7 @@ const InterviewPage = () => {
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="w-12 h-12 bg-gradient-to-r from-cyan-500 via-magenta-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg"
             >
-              <span className="text-white text-base font-bold">{user.name.charAt(0)}</span>
+              <span className="text-white text-base font-bold">{mockUser.name.charAt(0)}</span>
             </motion.div>
             <div>
               <h1 className={`text-xl font-black ${classes.text.primary} mb-0.5`}>

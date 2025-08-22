@@ -93,11 +93,13 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
+import { getRandomMockUser } from '../utils/mockUserData'
 import toast from 'react-hot-toast'
 
 const ProfilePage = () => {
-  const { user } = useAuth()
+  const { currentUser } = useAuth()
   const { classes } = useThemeClasses()
+  const [mockUser] = useState(getRandomMockUser())
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
@@ -159,7 +161,7 @@ const ProfilePage = () => {
       setLoading(true)
       // Mock profile data - in real app, this would fetch from API
       const mockProfile = {
-        id: user.id,
+        id: mockUser.id,
         name: 'John Doe',
         email: 'john.doe@email.com',
         phone: '+1 (555) 123-4567',

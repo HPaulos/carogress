@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import AIChatbot from './components/common/AIChatbot'
+import ProtectedRoute from './components/ProtectedRoute'
 import HomePage from './pages/HomePage'
 import FeaturesPage from './pages/FeaturesPage'
 import PricingPage from './pages/PricingPage'
@@ -52,20 +53,51 @@ function AppContent() {
       {location.pathname !== '/ai-coach' && <Navbar />}
       <AnimatePresence mode="wait">
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/stories" element={<StoriesPage />} />
-          <Route path="/interview" element={<InterviewPage />} />
-                          <Route path="/resume" element={<ResumePage />} />
-                <Route path="/document/:type/:documentId" element={<DocumentDetailsPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/ai-coach" element={<AICoachPage />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          
+          {/* Protected Routes - Require Authentication */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/stories" element={
+            <ProtectedRoute>
+              <StoriesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/interview" element={
+            <ProtectedRoute>
+              <InterviewPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/resume" element={
+            <ProtectedRoute>
+              <ResumePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/document/:type/:documentId" element={
+            <ProtectedRoute>
+              <DocumentDetailsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/ai-coach" element={
+            <ProtectedRoute>
+              <AICoachPage />
+            </ProtectedRoute>
+          } />
         </Routes>
       </AnimatePresence>
       <AIChatbot />

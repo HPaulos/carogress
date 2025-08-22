@@ -10,6 +10,7 @@ import {
   TrendingUpIcon, Home, Clock, Flame, Crown, ChevronLeft, Search
 } from 'lucide-react'
 import { useThemeClasses } from '../theme/useTheme'
+import { getRandomMockUser } from '../utils/mockUserData'
 
 const DashboardPage = () => {
   const { classes } = useThemeClasses()
@@ -37,7 +38,7 @@ const DashboardPage = () => {
   })
 
   // Mock user data
-  const user = { name: 'John Doe' }
+  const user = getRandomMockUser()
 
   // Achievement categories
   const achievementCategories = [

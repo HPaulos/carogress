@@ -10,10 +10,11 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
+import { getRandomMockUser } from '../utils/mockUserData'
 import toast from 'react-hot-toast'
 
 const StoriesPage = () => {
-  const { user } = useAuth()
+  const { currentUser } = useAuth()
   const { classes } = useThemeClasses()
   const [stories, setStories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -24,6 +25,7 @@ const StoriesPage = () => {
   const [expandedStories, setExpandedStories] = useState(new Set())
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
+  const [mockUser] = useState(getRandomMockUser())
 
   const categories = [
     { id: 'all', name: 'All Stories', icon: BookOpen, color: 'blue' },
@@ -35,11 +37,9 @@ const StoriesPage = () => {
 
   useEffect(() => {
     loadStories()
-  }, [user])
+  }, [currentUser])
 
   const loadStories = async () => {
-    if (!user) return
-    
     try {
       // Mock stories data based on achievements - ordered from latest to oldest
       const mockStories = [
@@ -62,9 +62,9 @@ The project's success led to my promotion to Senior Engineering Manager and beca
           shares: 3,
           readTime: '3 min read',
           author: {
-            name: user.name,
-            avatar: user.avatar,
-            title: user.title
+            name: mockUser.name,
+            avatar: mockUser.avatar,
+            title: mockUser.title
           }
         },
         {
@@ -86,9 +86,9 @@ This project not only solved our immediate scalability issues but also establish
           shares: 7,
           readTime: '2 min read',
           author: {
-            name: user.name,
-            avatar: user.avatar,
-            title: user.title
+            name: mockUser.name,
+            avatar: mockUser.avatar,
+            title: mockUser.title
           }
         },
         {
@@ -110,9 +110,9 @@ The results exceeded expectations: we reduced response time by 80% and improved 
           shares: 4,
           readTime: '3 min read',
           author: {
-            name: user.name,
-            avatar: user.avatar,
-            title: user.title
+            name: mockUser.name,
+            avatar: mockUser.avatar,
+            title: mockUser.title
           }
         },
         {
@@ -134,9 +134,9 @@ The result was a successful product launch that exceeded sales targets by 25% an
           shares: 2,
           readTime: '2 min read',
           author: {
-            name: user.name,
-            avatar: user.avatar,
-            title: user.title
+            name: mockUser.name,
+            avatar: mockUser.avatar,
+            title: mockUser.title
           }
         },
         {
@@ -158,9 +158,9 @@ The success of this mentorship program led to its adoption across the entire eng
           shares: 5,
           readTime: '2 min read',
           author: {
-            name: user.name,
-            avatar: user.avatar,
-            title: user.title
+            name: mockUser.name,
+            avatar: mockUser.avatar,
+            title: mockUser.title
           }
         }
       ]
@@ -262,7 +262,7 @@ The success of this mentorship program led to its adoption across the entire eng
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="w-12 h-12 bg-gradient-to-r from-cyan-500 via-magenta-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg"
             >
-              <span className="text-white text-base font-bold">{user.name.charAt(0)}</span>
+                              <span className="text-white text-base font-bold">{mockUser.name.charAt(0)}</span>
             </motion.div>
             <div>
               <h1 className={`text-xl font-black ${classes.text.primary} mb-0.5`}>

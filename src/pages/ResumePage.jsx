@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
+import { getRandomMockUser } from '../utils/mockUserData'
 import { 
   FileEdit, 
   MessageSquare, 
@@ -57,9 +58,10 @@ import { toast } from 'react-hot-toast'
 import mockDataService from '../services/mockDataService'
 
 const ResumePage = () => {
-  const { user } = useAuth()
+  const { currentUser } = useAuth()
   const { classes } = useThemeClasses()
   const navigate = useNavigate()
+  const [mockUser] = useState(getRandomMockUser())
   
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('generator')
@@ -351,7 +353,7 @@ const ResumePage = () => {
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm font-bold">{user.name.charAt(0)}</span>
+                              <span className="text-white text-sm font-bold">{mockUser.name.charAt(0)}</span>
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-white mb-1">

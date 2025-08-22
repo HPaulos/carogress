@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { 
   Eye, 
   EyeOff, 
@@ -23,6 +23,10 @@ const SignInPage = () => {
   const { classes } = useThemeClasses()
   const { signin } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Get the intended destination from location state, or default to dashboard
+  const from = location.state?.from?.pathname || '/dashboard'
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -75,7 +79,7 @@ const SignInPage = () => {
     try {
       await signin(formData.email, formData.password)
       toast.success('Welcome back!')
-      navigate('/dashboard')
+      navigate(from, { replace: true })
     } catch (error) {
       console.error('Signin error:', error)
       let errorMessage = 'Failed to sign in. Please try again.'

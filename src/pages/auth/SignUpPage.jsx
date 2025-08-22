@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { 
   Eye, 
   EyeOff, 
@@ -22,6 +22,10 @@ const SignUpPage = () => {
   const { classes } = useThemeClasses()
   const { signup } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Get the intended destination from location state, or default to dashboard
+  const from = location.state?.from?.pathname || '/dashboard'
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -96,7 +100,7 @@ const SignUpPage = () => {
     try {
       await signup(formData.email, formData.password, formData.name)
       toast.success('Account created successfully!')
-      navigate('/dashboard')
+      navigate(from, { replace: true })
     } catch (error) {
       console.error('Signup error:', error)
       let errorMessage = 'Failed to create account. Please try again.'

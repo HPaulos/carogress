@@ -32,13 +32,15 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
+import { getRandomMockUser } from '../utils/mockUserData'
 import toast from 'react-hot-toast'
 
 const DocumentDetailsPage = () => {
   const { documentId, type } = useParams()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { currentUser } = useAuth()
   const { classes } = useThemeClasses()
+  const [mockUser] = useState(getRandomMockUser())
   const [document, setDocument] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('preview')
@@ -72,9 +74,9 @@ const DocumentDetailsPage = () => {
           createdAt: new Date().toISOString(),
           lastModified: new Date().toISOString(),
           content: type === 'resume' ? {
-            name: user.name || 'Professional Candidate',
+            name: mockUser.name,
             title: 'Software Engineer',
-            email: user.email || 'candidate@email.com',
+            email: mockUser.email,
             phone: '+1 (555) 123-4567',
             location: 'San Francisco, CA',
             summary: 'Experienced software engineer with expertise in modern web technologies and full-stack development. Proven track record of delivering scalable solutions and collaborating effectively in agile environments.',
@@ -126,7 +128,7 @@ I am particularly drawn to your company's innovative approach to technology and 
 I would welcome the opportunity to discuss how my background and skills can contribute to your organization's success. Thank you for considering my application.
 
 Best regards,
-${user.name || 'Professional Candidate'}`
+${mockUser.name}`
         }
       } else {
         // Use existing mock document data for saved documents
