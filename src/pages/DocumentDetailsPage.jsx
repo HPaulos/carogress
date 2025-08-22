@@ -51,7 +51,6 @@ const DocumentDetailsPage = () => {
   }, [documentId, type])
 
   const loadDocument = async () => {
-    if (!user) return
     
     try {
       setLoading(true)

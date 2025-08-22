@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Settings, 
@@ -38,6 +38,18 @@ const SettingsPage = () => {
   })
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [passwordErrors, setPasswordErrors] = useState({})
+  const [passwordSuccess, setPasswordSuccess] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+
+  // Auto-clear success message after 5 seconds
+  useEffect(() => {
+    if (passwordSuccess) {
+      const timer = setTimeout(() => {
+        setPasswordSuccess('')
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [passwordSuccess])
 
   // General settings state
   const [settings, setSettings] = useState({
@@ -51,8 +63,10 @@ const SettingsPage = () => {
   const handlePasswordChange = async (e) => {
     e.preventDefault()
     
-    // Reset errors
+    // Reset errors and messages
     setPasswordErrors({})
+    setPasswordSuccess('')
+    setPasswordError('')
     
     // Validation
     const errors = {}
@@ -82,7 +96,7 @@ const SettingsPage = () => {
     
     try {
       await updatePassword(passwordForm.newPassword)
-      toast.success('Password updated successfully!')
+      setPasswordSuccess('Password updated successfully!')
       setPasswordForm({
         currentPassword: '',
         newPassword: '',
@@ -91,7 +105,21 @@ const SettingsPage = () => {
       setShowPasswords({ current: false, new: false, confirm: false })
     } catch (error) {
       console.error('Error updating password:', error)
-      toast.error(error.message || 'Failed to update password')
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to update password'
+      
+      if (error.code === 'auth/requires-recent-login') {
+        errorMessage = 'Please sign out and sign in again to change your password'
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password is too weak. Please choose a stronger password'
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your connection and try again'
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
+      setPasswordError(errorMessage)
     } finally {
       setIsChangingPassword(false)
     }
@@ -252,6 +280,9 @@ const SettingsPage = () => {
               <div>
                 <h2 className={`text-lg font-bold ${classes.text.primary}`}>Change Password</h2>
                 <p className={`text-sm ${classes.text.secondary}`}>Update your account password</p>
+                <p className={`text-xs ${classes.text.secondary} mt-1`}>
+                  Note: You may need to re-authenticate if you haven't signed in recently
+                </p>
               </div>
             </div>
 
@@ -367,6 +398,34 @@ const SettingsPage = () => {
                   </>
                 )}
               </button>
+
+              {/* Success Message */}
+              {passwordSuccess && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-3"
+                >
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-green-700 dark:text-green-400 font-medium">
+                    {passwordSuccess}
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Error Message */}
+              {passwordError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-3"
+                >
+                  <AlertCircle className="w-5 h-5 text-red-500" />
+                  <span className="text-red-700 dark:text-red-400 font-medium">
+                    {passwordError}
+                  </span>
+                </motion.div>
+              )}
             </form>
           </motion.div>
 

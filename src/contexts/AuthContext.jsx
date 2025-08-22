@@ -119,14 +119,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Update password function
-  const updatePassword = async (newPassword) => {
+  const updateUserPassword = async (newPassword) => {
     try {
       if (!currentUser) {
         throw new Error('No user is currently signed in');
       }
       
+      if (!newPassword || newPassword.length < 6) {
+        throw new Error('Password must be at least 6 characters long');
+      }
+      
       await updatePassword(currentUser, newPassword);
     } catch (error) {
+      console.error('Error updating password:', error);
       throw error;
     }
   };
@@ -158,7 +163,7 @@ export const AuthProvider = ({ children }) => {
     resetPassword,
     getUserProfile,
     updateUserProfile,
-    updatePassword,
+    updatePassword: updateUserPassword,
     loading
   };
 

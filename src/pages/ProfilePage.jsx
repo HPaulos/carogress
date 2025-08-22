@@ -91,7 +91,6 @@ import {
   Moon,
   Wind
 } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
 import { useThemeClasses } from '../theme/useTheme'
 import mockDataService from '../services/mockDataService'
 import { getRandomMockUser } from '../utils/mockUserData'
@@ -297,7 +296,7 @@ const ProfilePage = () => {
     )
   }
 
-  if (!user || !profile) {
+  if (!profile) {
     return (
       <div className={`min-h-screen ${classes.bg.primary} flex items-center justify-center`}>
         <div className="text-center">
