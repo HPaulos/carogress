@@ -21,16 +21,16 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [unreadNotifications, setUnreadNotifications] = useState(0)
-  const { user, logout } = useAuth()
+  const { currentUser, signout } = useAuth()
   const { isDark, toggleTheme } = useTheme()
   const { classes } = useThemeClasses()
   const location = useLocation()
 
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
       loadUnreadNotifications()
     }
-  }, [user])
+  }, [currentUser])
 
   const loadUnreadNotifications = async () => {
     try {
@@ -58,7 +58,7 @@ const Navbar = () => {
     { name: 'Profile', path: '/profile' },
   ]
 
-  const navItems = user ? userNavItems : publicNavItems
+  const navItems = currentUser ? userNavItems : publicNavItems
 
   const isActive = (path) => location.pathname === path
 
@@ -93,7 +93,7 @@ const Navbar = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            {user ? (
+            {currentUser ? (
               <>
                 {/* Theme Toggle */}
                 <button
@@ -120,10 +120,10 @@ const Navbar = () => {
                     className={`flex items-center space-x-2 text-sm font-medium ${classes.text.secondary} hover:text-blue-600 transition-colors`}
                   >
                     <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                      {user.avatar ? (
+                      {currentUser.photoURL ? (
                         <img
-                          src={user.avatar}
-                          alt={user.name}
+                          src={currentUser.photoURL}
+                          alt={currentUser.displayName || currentUser.email}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.style.display = 'none'
@@ -133,10 +133,10 @@ const Navbar = () => {
                       ) : null}
                       <User 
                         size={16} 
-                        className={`text-gray-500 dark:text-gray-400 ${user.avatar ? 'hidden' : 'block'}`}
+                        className={`text-gray-500 dark:text-gray-400 ${currentUser.photoURL ? 'hidden' : 'block'}`}
                       />
                     </div>
-                    <span className="max-w-32 truncate">{user.name}</span>
+                    <span className="max-w-32 truncate">{currentUser.displayName || currentUser.email}</span>
                     <ChevronDown size={16} />
                   </button>
 
@@ -167,7 +167,7 @@ const Navbar = () => {
                         <hr className={`my-2 ${classes.border.primary}`} />
                         <button
                           onClick={() => {
-                            logout()
+                            signout()
                             setIsDropdownOpen(false)
                           }}
                           className={`flex items-center w-full px-4 py-2 text-sm ${classes.text.secondary} hover:${classes.bg.tertiary}`}
@@ -235,16 +235,16 @@ const Navbar = () => {
                 </Link>
               ))}
               
-              {user ? (
+              {currentUser ? (
                 <>
                   <hr className={`my-2 ${classes.border.primary}`} />
                   {/* User Info in Mobile Menu */}
                   <div className="flex items-center px-3 py-2">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-3">
-                      {user.avatar ? (
+                      {currentUser.photoURL ? (
                         <img
-                          src={user.avatar}
-                          alt={user.name}
+                          src={currentUser.photoURL}
+                          alt={currentUser.displayName || currentUser.email}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.style.display = 'none'
@@ -254,11 +254,11 @@ const Navbar = () => {
                       ) : null}
                       <User 
                         size={20} 
-                        className={`text-gray-500 dark:text-gray-400 ${user.avatar ? 'hidden' : 'block'}`}
+                        className={`text-gray-500 dark:text-gray-400 ${currentUser.photoURL ? 'hidden' : 'block'}`}
                       />
                     </div>
                     <div>
-                      <p className={`text-sm font-medium ${classes.text.primary}`}>{user.name}</p>
+                      <p className={`text-sm font-medium ${classes.text.primary}`}>{currentUser.displayName || currentUser.email}</p>
                       <p className={`text-xs ${classes.text.secondary}`}>View Profile</p>
                     </div>
                   </div>
@@ -278,7 +278,7 @@ const Navbar = () => {
                   </Link>
                   <button
                     onClick={() => {
-                      logout()
+                      signout()
                       setIsOpen(false)
                     }}
                     className={`block w-full text-left px-3 py-2 text-sm font-medium ${classes.text.secondary} hover:text-blue-600 hover:${classes.bg.tertiary} rounded-md`}

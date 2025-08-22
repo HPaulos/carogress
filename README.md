@@ -104,13 +104,7 @@ carogress/
 4. **Open your browser**
    Navigate to `http://localhost:3000`
 
-### Demo Accounts
 
-The application includes demo accounts for testing:
-
-- **Email**: `demo@example.com` | **Password**: `demo123`
-- **Email**: `john@example.com` | **Password**: `demo123`
-- **Email**: `emma@example.com` | **Password**: `demo123`
 
 ## 📊 Mock Data Structure
 

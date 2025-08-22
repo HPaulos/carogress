@@ -1,113 +1,155 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  updateProfile
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-  return context
-}
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
+
+  // Sign up function
+  const signup = async (email, password, displayName) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Update display name
+      await updateProfile(userCredential.user, {
+        displayName: displayName
+      });
+
+      // Create user profile in Firestore
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        email: email,
+        displayName: displayName,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        profile: {
+          bio: '',
+          avatar: '',
+          skills: [],
+          experience: [],
+          education: [],
+          goals: []
+        }
+      });
+
+      return userCredential.user;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Sign in function
+  const signin = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Update last login
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        lastLogin: new Date().toISOString()
+      }, { merge: true });
+
+      return userCredential.user;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Sign out function
+  const signout = () => {
+    return signOut(auth);
+  };
+
+  // Password reset function
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
+
+  // Get user profile from Firestore
+  const getUserProfile = async (uid) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        return userDoc.data();
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+  };
+
+  // Update user profile
+  const updateUserProfile = async (uid, profileData) => {
+    try {
+      await setDoc(doc(db, 'users', uid), {
+        profile: profileData
+      }, { merge: true });
+      
+      // Update local state
+      if (userProfile) {
+        setUserProfile({
+          ...userProfile,
+          profile: profileData
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    // Check for stored user data on app load
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
-    setLoading(false)
-  }, [])
-
-  const login = async (email, password) => {
-    try {
-      // Simulate API call with mock data
-      const response = await fetch('/users.json')
-      const data = await response.json()
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
       
-      const foundUser = data.users.find(
-        u => u.email === email && u.password === password
-      )
-
-      if (foundUser) {
-        const { password: _, ...userWithoutPassword } = foundUser
-        setUser(userWithoutPassword)
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword))
-        toast.success(`Welcome back, ${userWithoutPassword.name}!`)
-        navigate('/dashboard')
-        return true
+      if (user) {
+        // Fetch user profile
+        const profile = await getUserProfile(user.uid);
+        setUserProfile(profile);
       } else {
-        toast.error('Invalid email or password')
-        return false
-      }
-    } catch (error) {
-      console.error('Login error:', error)
-      toast.error('Login failed. Please try again.')
-      return false
-    }
-  }
-
-  // Alias for consistency
-  const signIn = login
-
-  const signup = async (userData) => {
-    try {
-      // Simulate API call
-      const newUser = {
-        id: Date.now().toString(),
-        ...userData,
-        level: 1,
-        experience: 0,
-        streak: 0,
-        totalPoints: 0,
-        achievements: [],
-        createdAt: new Date().toISOString()
+        setUserProfile(null);
       }
       
-      setUser(newUser)
-      localStorage.setItem('user', JSON.stringify(newUser))
-      toast.success(`Welcome to AI Career Progress, ${newUser.name}!`)
-      navigate('/dashboard')
-      return true
-    } catch (error) {
-      toast.error('Signup failed. Please try again.')
-      return false
-    }
-  }
+      setLoading(false);
+    });
 
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem('user')
-    toast.success('Logged out successfully')
-    navigate('/')
-  }
-
-  const updateUser = (updates) => {
-    const updatedUser = { ...user, ...updates }
-    setUser(updatedUser)
-    localStorage.setItem('user', JSON.stringify(updatedUser))
-  }
+    return unsubscribe;
+  }, []);
 
   const value = {
-    user,
-    login,
-    signIn,
+    currentUser,
+    userProfile,
     signup,
-    logout,
-    updateUser,
+    signin,
+    signout,
+    resetPassword,
+    getUserProfile,
+    updateUserProfile,
     loading
-  }
+  };
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
